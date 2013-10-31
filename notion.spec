@@ -1,10 +1,10 @@
 Name:           notion
-Version:        
+Version:        3.2013030200
 Release:        1%{?dist}
-Summary:        
+Summary:        Tabbed tiling window manager. Fork of Ion3.
 
 License:        
-URL:            
+URL:            http://notion.sourceforge.net
 Source0:        
 
 BuildRequires:  
