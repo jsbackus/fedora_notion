@@ -44,7 +44,7 @@ sed -e 's/^\(PREFIX=\).*$/\1\/usr/' \
     -i system-autodetect.mk
 
 %build
-make %{?_smp_mflags} "DOCS=README LICENSE"
+make %{?_smp_mflags}
 
 %check
 #make test
