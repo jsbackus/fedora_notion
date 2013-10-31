@@ -23,8 +23,8 @@ Requires:       libSM
 #Requires:       libXinerama
 #Requires:       libXrandr
 
-Provides:	libtu
-Provides:	libextl
+Provides:       libtu
+Provides:       libextl
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system. Features include:
@@ -36,20 +36,18 @@ Notion is a tabbed, tiling window manager for the X windows system. Features inc
 %prep
 %setup -q -n notion-3-2013030200
 
-%build
-
-cd %{buildsubdir}
 sed -e 's/^\(PREFIX=\).*$/\1\/usr/' \
     -e 's/^\(ETCDIR=\).*$/\1\/etc\/notion/' \
     -e 's/^\(LUA_DIR=\).*$/\1\/usr/' \
     -e 's/^\(X11_PREFIX=\).*/\1\/usr/' \
-    -e 's/^\(LIBDIR=\).*//' \
+    -e 's|^\(LIBDIR=\).*|\1%{_libdir}|' \
     -i system-autodetect.mk
 
-make INCLUDES=-I%{buildsubdir} LIBDIR=%{_libdir}
+%build
+make %{?_smp_mflags} "DOCS=README LICENSE"
 
 %check
-make test
+#make test
 
 %install
 rm -rf $RPM_BUILD_ROOT
