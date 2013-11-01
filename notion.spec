@@ -1,7 +1,7 @@
 Name:           notion
 Version:        3.2013030200
 Release:        1%{?dist}
-Summary:        Tabbed, tiling window manager. Fork of Ion3.
+Summary:        Tabbed, tiling window manager forked from Ion3
 
 License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
@@ -15,20 +15,11 @@ BuildRequires:  lua
 BuildRequires:  libXext-devel
 BuildRequires:  libSM-devel
 
-Requires:       glib2
-Requires:       gettext
-Requires:       lua
-Requires:       libXext
-Requires:       libSM
-#Requires:       libXinerama
-#Requires:       libXrandr
-
-Provides:       libtu
-Provides:       libextl
-
 %description
-Notion is a tabbed, tiling window manager for the X windows system. Features include:
-* Workspaces: each workspace has its own tiling.
+Notion is a tabbed, tiling window manager for the X windows system.
+
+Features include:
+* Workspaces: each work space has its own tiling.
 * Multiheaded
 * RandR support
 * Extensible via Lua scripts.
@@ -54,9 +45,20 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %files
-%doc README LICENSE
-# to do
-
+%config(noreplace) %{_sysconfdir}/*
+%{_bindir}/*
+%{_libdir}/*
+%lang(cs) %{_mandir}/cs/*
+%lang(fi) %{_mandir}/fi/*
+%{_mandir}/man1/*
+%lang(cs) %{_datadir}/locale/cs/*
+%lang(de) %{_datadir}/locale/de/*
+%lang(fi) %{_datadir}/locale/fi/*
+%lang(fr) %{_datadir}/locale/fr/*
+%{_datadir}/notion/*
+%{_defaultdocdir}/*
 
 %changelog
+* Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
+- Initial addition to Fedora.
 
