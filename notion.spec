@@ -6,6 +6,7 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/notion-3-2013030200-src.tar.bz2
+Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
 
 BuildRequires:  pkgconfig
 BuildRequires:  libXinerama-devel
@@ -14,6 +15,11 @@ BuildRequires:  libXrandr-devel
 BuildRequires:  lua
 BuildRequires:  libXext-devel
 BuildRequires:  libSM-devel
+
+BuildRequires:  rubber
+BuildRequires:  latex2html
+BuildRequires:  texlive-collection-htmlxml
+BuildRequires:  texlive-collection-latexextra
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
@@ -36,6 +42,14 @@ such as:
 * Status monitors for the statusbar
 * Additional styles
 
+%package doc
+Summary:        Documentation for the Notion window manager
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+License:        GFDL
+%description doc
+This package contains the documentation for extending and customizing 
+Notion.
+
 %prep
 %setup -q -n notion-3-2013030200
 
@@ -50,8 +64,11 @@ sed -e 's/^\(PREFIX=\).*$/\1\/usr/' \
 make %{?_smp_mflags}
 find $RPM_BUILD_DIR/%{buildsubdir}/man -iname '*.1' -exec iconv -f LATIN1 -t utf8 -o '{}' '{}' \;
 
+cd $RPM_BUILD_DIR/notion-doc
+make %{?_smp_mflags} TOPDIR=$RPM_BUILD_DIR/%{buildsubdir} all
+
 %check
-#make test
+make test
 
 %install
 rm -rf $RPM_BUILD_ROOT
