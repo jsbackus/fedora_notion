@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=notion
+GenericName=Notion
+Comment=NotIon Window Manager for X
+Exec=/usr/local/bin/notion
+Terminal=false
+TryExec=/usr/local/bin/notion
+Type=Application
+
+[Window Manager]
+SessionManaged=true

@@ -1,0 +1,24 @@
+diff -rupN notion-3-2013030200/libtu/rb.c notion-3-2013030200_patched/libtu/rb.c
+--- notion-3-2013030200/libtu/rb.c	2013-11-02 18:01:10.234076407 -0400
++++ notion-3-2013030200_patched/libtu/rb.c	2013-11-02 18:02:17.498783135 -0400
+@@ -15,7 +15,7 @@ Lesser General Public License for more d
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301 USA
+  */
+ /* Revision 1.2.  Jim Plank */
+ 
+diff -rupN notion-3-2013030200/libtu/rb.h notion-3-2013030200_patched/libtu/rb.h
+--- notion-3-2013030200/libtu/rb.h	2013-11-02 18:01:10.233076442 -0400
++++ notion-3-2013030200_patched/libtu/rb.h	2013-11-02 18:02:33.026253752 -0400
+@@ -15,7 +15,7 @@ Lesser General Public License for more d
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301 USA
+  */
+ 
+ /* Revision 1.2.  Jim Plank */

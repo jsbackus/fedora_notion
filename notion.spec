@@ -6,13 +6,21 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/notion-3-2013030200-src.tar.bz2
-Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
+#Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
+# The doc package was pulled from upstream's git repo. Use the following command:
+# 
+Source1:        notion-doc-3-2013030200.tar.bz2
+Source2:        notion.desktop
+
+Patch0:         p00-man_utf8.patch
+Patch1:         p01-fsf_addr.patch
 
 BuildRequires:  pkgconfig
 BuildRequires:  libXinerama-devel
 BuildRequires:  libXrandr-devel
 #BuildRequires:  glib2-devel
 BuildRequires:  lua
+BuildRequires:  lua-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libSM-devel
 
@@ -20,6 +28,9 @@ BuildRequires:  rubber
 BuildRequires:  latex2html
 BuildRequires:  texlive-collection-htmlxml
 BuildRequires:  texlive-collection-latexextra
+
+Requires:       xterm
+Requires:       xorg-x11-utils
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
@@ -52,32 +63,36 @@ Notion.
 
 %prep
 %setup -q -n notion-3-2013030200
+tar -xvf %SOURCE1
 
-sed -e 's/^\(PREFIX=\).*$/\1\/usr/' \
-    -e 's/^\(ETCDIR=\).*$/\1\/etc\/notion/' \
-    -e 's/^\(LUA_DIR=\).*$/\1\/usr/' \
-    -e 's/^\(X11_PREFIX=\).*$/\1\/usr/' \
+%patch0 -p1
+%patch1 -p1
+
+sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
+    -e 's|^\(ETCDIR=\).*$|\1/etc/X11/notion|' \
+    -e 's|^\(LUA_DIR=\).*$|\1/usr|' \
+    -e 's|^\(X11_PREFIX=\).*$|\1/usr|' \
     -e 's|^\(LIBDIR=\).*$|\1%{_libdir}|' \
     -i system-autodetect.mk
 
 %build
 make %{?_smp_mflags}
-find $RPM_BUILD_DIR/%{buildsubdir}/man -iname '*.1' -exec iconv -f LATIN1 -t utf8 -o '{}' '{}' \;
 
-cd $RPM_BUILD_DIR/notion-doc
-make %{?_smp_mflags} TOPDIR=$RPM_BUILD_DIR/%{buildsubdir} all
+#cd $RPM_BUILD_DIR/notion-doc
+cd notion-doc
+make %{?_smp_mflags} TOPDIR=..
 
 %check
-make test
+#make test
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-cp -r $RPM_BUILD_ROOT%{_sysconfdir}/notion $RPM_BUILD_ROOT%{_datadir}/notion/etc
+cp -r $RPM_BUILD_ROOT%{_sysconfdir}/X11/notion $RPM_BUILD_ROOT%{_datadir}/notion/etc
 mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/contrib
-for i in keybindings scripts statusd styles; do
+for i in keybindings scripts statusbar statusd styles; do
   cp -r $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_datadir}/notion/contrib/
 done
 
@@ -86,8 +101,14 @@ for i in LICENSE README; do
   cp -r $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}/
 done
 
+cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
+make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version} TOPDIR=..
+
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/xsessions
+cp %SOURCE2 $RPM_BUILD_ROOT%{_datadir}/xsessions/
+
 %files
-%config(noreplace) %{_sysconfdir}/*
+%config(noreplace) %{_sysconfdir}/X11/notion*
 %{_bindir}/*
 %{_libdir}/*
 %lang(cs) %{_mandir}/cs/*
@@ -104,11 +125,18 @@ done
 %{_datadir}/notion/welcome.txt
 %lang(fi) %{_datadir}/notion/welcome.fi.txt
 %lang(cs) %{_datadir}/notion/welcome.cs.txt
-%{_defaultdocdir}/%{name}-%{version}/*
+%{_defaultdocdir}/%{name}-%{version}/README
+%{_defaultdocdir}/%{name}-%{version}/LICENSE
+%{_defaultdocdir}/%{name}-%{version}/ChangeLog
+%{_defaultdocdir}/%{name}-%{version}/RELNOTES
+%{_datadir}/xsessions/notion.desktop
 
 %files contrib
 %{_datadir}/notion/contrib
 %{_defaultdocdir}/%{name}-contrib-%{version}/*
+
+%files doc
+%{_defaultdocdir}/%{name}-%{version}/*
 
 %changelog
 * Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
