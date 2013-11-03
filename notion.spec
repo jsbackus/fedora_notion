@@ -15,6 +15,7 @@ Source2:        notion.desktop
 Patch0:         p00-man_utf8.patch
 Patch1:         p01-fsf_addr.patch
 
+BuildRequires:  gettext
 BuildRequires:  pkgconfig
 BuildRequires:  libXinerama-devel
 BuildRequires:  libXrandr-devel
@@ -88,7 +89,6 @@ make %{?_smp_mflags} TOPDIR=..
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-cp -r $RPM_BUILD_ROOT%{_sysconfdir}/X11/notion $RPM_BUILD_ROOT%{_datadir}/notion/etc
 mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/contrib
