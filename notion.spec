@@ -9,17 +9,19 @@ Source0:        http://downloads.sourceforge.net/project/notion/notion-3-2013030
 #Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
 # The doc package was pulled from upstream's git repo. Use the following command:
 # 
-Source1:        notion-doc-3-2013030200.tar.bz2
-Source2:        notion.desktop
+Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc-3-2013030200.tar.bz2
+#
+Source2:        https://www.dropbox.com/sh/n1icl72l63dy9tr/Qurc5REVFy/notion.desktop
 
-Patch0:         p00-man_utf8.patch
-Patch1:         p01-fsf_addr.patch
+Patch0:         https://www.dropbox.com/sh/n1icl72l63dy9tr/QlpDOhk8Vc/notion-3.2013030200.p00-man-utf8.patch
+Patch1:         https://www.dropbox.com/sh/n1icl72l63dy9tr/Pc9uyH5Boo/notion-3.2013030200.p01-fsf_addr.patch
+Patch2:         https://www.dropbox.com/sh/n1icl72l63dy9tr/dwIWWPddTE/notion-doc-3.2013030200.p02-css_newline.patch
+Patch3:         https://www.dropbox.com/sh/n1icl72l63dy9tr/_4wS0oLCEX/notion-3.2013030200.p03-ChangeLog_update.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
 BuildRequires:  libXinerama-devel
 BuildRequires:  libXrandr-devel
-#BuildRequires:  glib2-devel
 BuildRequires:  lua
 BuildRequires:  lua-devel
 BuildRequires:  libXext-devel
@@ -51,7 +53,7 @@ This package contains a number of scripts from third parties for Notion,
 such as:
 * Alternative keybindings
 * Miscellaneous support scripts
-* Status monitors for the statusbar
+* Status monitors for the status bar
 * Additional styles
 
 %package doc
@@ -62,12 +64,21 @@ License:        GFDL
 This package contains the documentation for extending and customizing 
 Notion.
 
+%package devel
+Summary:        Development files for the Notion window manager
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+%description devel
+This package contains the development files necessary for extending and 
+customizing Notion.
+
 %prep
 %setup -q -n notion-3-2013030200
 tar -xvf %SOURCE1
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
     -e 's|^\(ETCDIR=\).*$|\1/etc/X11/notion|' \
@@ -79,38 +90,76 @@ sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
 %build
 make %{?_smp_mflags}
 
-#cd $RPM_BUILD_DIR/notion-doc
-cd notion-doc
-make %{?_smp_mflags} TOPDIR=..
+cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
+make TOPDIR=.. all
 
 %check
 #make test
 
 %install
-rm -rf $RPM_BUILD_ROOT
+#rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/contrib
+# Install and verify desktop file
+install -Dm0644 %SOURCE2 $RPM_BUILD_ROOT%{_datadir}/xsessions/%{name}.desktop
+
+# contrib subpackage
 for i in keybindings scripts statusbar statusd styles; do
-  cp -r $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_datadir}/notion/contrib/
+  mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/* $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
 done
 
 mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}
 for i in LICENSE README; do
-  cp -r $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}/
 done
 
+# Doc subpackage
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
-make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version} TOPDIR=..
+make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version} TOPDIR=..
+for i in LICENSE README; do
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version}/
+done
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/xsessions
-cp %SOURCE2 $RPM_BUILD_ROOT%{_datadir}/xsessions/
+# Dev subpackage
+for i in de ioncore libextl libmainloop libtu mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
+  mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/$i/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i/*.h $RPM_BUILD_ROOT%{_includedir}/notion/$i/
+done
+
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/build
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/*.mk $RPM_BUILD_ROOT%{_includedir}/notion/build/ 
+
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_includedir}/notion/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/version.h $RPM_BUILD_ROOT%{_includedir}/notion/
+
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/notion/build
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/notion/libextl
+
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/libs.mk $RPM_BUILD_ROOT%{_libdir}/notion/build/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_libdir}/notion/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_libdir}/notion/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_libdir}/notion/libextl/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_libdir}/notion/
+
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
+for i in rules.mk system-inc.mk; do
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_datadir}/notion/build/
+done
+
+mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
+for i in LICENSE README; do
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
+done
 
 %files
-%config(noreplace) %{_sysconfdir}/X11/notion*
+%config(noreplace) %{_sysconfdir}/X11/%{name}/*
 %{_bindir}/*
-%{_libdir}/*
+%{_libdir}/%{name}/bin/*
+%{_libdir}/%{name}/lc/*
+%{_libdir}/%{name}/mod/*
+%{_libdir}/%{name}/libextl/*
 %lang(cs) %{_mandir}/cs/*
 %lang(fi) %{_mandir}/fi/*
 %{_mandir}/man1/*
@@ -118,25 +167,35 @@ cp %SOURCE2 $RPM_BUILD_ROOT%{_datadir}/xsessions/
 %lang(de) %{_datadir}/locale/de/*
 %lang(fi) %{_datadir}/locale/fi/*
 %lang(fr) %{_datadir}/locale/fr/*
-%{_datadir}/notion/etc
-%{_datadir}/notion/ion-completeman
-%{_datadir}/notion/ion-runinxterm
-%{_datadir}/notion/notion-lock
-%{_datadir}/notion/welcome.txt
-%lang(fi) %{_datadir}/notion/welcome.fi.txt
-%lang(cs) %{_datadir}/notion/welcome.cs.txt
+%{_datadir}/%{name}/ion-completeman
+%{_datadir}/%{name}/ion-runinxterm
+%{_datadir}/%{name}/notion-lock
+%{_datadir}/%{name}/welcome.txt
+%lang(fi) %{_datadir}/%{name}/welcome.fi.txt
+%lang(cs) %{_datadir}/%{name}/welcome.cs.txt
 %{_defaultdocdir}/%{name}-%{version}/README
 %{_defaultdocdir}/%{name}-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-%{version}/ChangeLog
 %{_defaultdocdir}/%{name}-%{version}/RELNOTES
-%{_datadir}/xsessions/notion.desktop
+%attr(0644, root, root) %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
-%{_datadir}/notion/contrib
+%{_datadir}/%{name}/contrib
 %{_defaultdocdir}/%{name}-contrib-%{version}/*
 
 %files doc
-%{_defaultdocdir}/%{name}-%{version}/*
+%{_defaultdocdir}/%{name}-doc-%{version}/*
+
+%files devel
+%{_defaultdocdir}/%{name}-devel-%{version}/*
+%{_includedir}/%{name}/*
+%{_libdir}/%{name}/build/libs.mk
+%{_libdir}/%{name}/config.h
+%{_libdir}/%{name}/install-sh
+%{_libdir}/%{name}/libextl/libextl-mkexports
+%{_libdir}/%{name}/system-autodetect.mk
+%{_datadir}/%{name}/build/rules.mk
+%{_datadir}/%{name}/build/system-inc.mk
 
 %changelog
 * Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1

@@ -3,9 +3,9 @@ Encoding=UTF-8
 Name=notion
 GenericName=Notion
 Comment=NotIon Window Manager for X
-Exec=/usr/local/bin/notion
+Exec=/usr/bin/notion
 Terminal=false
-TryExec=/usr/local/bin/notion
+TryExec=/usr/bin/notion
 Type=Application
 
 [Window Manager]
