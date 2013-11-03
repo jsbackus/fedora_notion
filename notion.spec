@@ -48,6 +48,7 @@ Features include:
 Summary:        3rd party scripts for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 License:        GPLv3
+BuildArch:      noarch
 %description contrib
 This package contains a number of scripts from third parties for Notion, 
 such as:
@@ -60,6 +61,7 @@ such as:
 Summary:        Documentation for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 License:        GFDL
+BuildArch:      noarch
 %description doc
 This package contains the documentation for extending and customizing 
 Notion.
