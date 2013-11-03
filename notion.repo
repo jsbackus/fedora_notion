@@ -1,0 +1,10 @@
+# To set up:
+# 1. copy all RPMS into /tmp/notion_repo and type:
+#   createrepo /tmp/notion_repo
+# 2. Place this file in /etc/yum.repos.d
+
+[notion]
+Name=Local Notion Debug Repository
+baseurl=file:///tmp/notion_repo
+enabled=1
+gpgcheck=0
