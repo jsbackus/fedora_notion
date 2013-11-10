@@ -51,6 +51,11 @@ Summary:        3rd party scripts for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 License:        GPLv3
 BuildArch:      noarch
+
+Requires:       terminus-fonts
+#Requires:       bitstream-vera-sans-fonts
+#Requires:       artwiz-aleczapka-snap-fonts
+
 %description contrib
 This package contains a number of scripts from third parties for Notion, 
 such as:
