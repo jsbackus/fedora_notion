@@ -35,7 +35,7 @@ BuildRequires:  texlive-collection-latexextra
 Requires:       xterm
 Requires:       xorg-x11-utils
 # This package provides Helvetica 12px.
-Requires:       xorg-x11-fonts-75dpi
+#Requires:       xorg-x11-fonts-75dpi
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
