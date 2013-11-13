@@ -194,10 +194,10 @@ done
 %{_includedir}/%{name}/*
 
 %changelog
-* Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
-- Initial addition to Fedora.
-
 * Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
 - Modified devel to place all files in /usr/include
 - Added sed statment to alter X11_LIBS= in system-autodetect.mk to use pkgconfig.
 - Patched fonts in styles scripts to use valid 100dpi fonts.
+
+* Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
+- Initial addition to Fedora.
