@@ -1,6 +1,6 @@
 Name:           notion
 Version:        3.2013030200
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Tabbed, tiling window manager forked from Ion3
 
 License:        LGPLv2 with exceptions
@@ -96,6 +96,7 @@ sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
     -e 's|^\(ETCDIR=\).*$|\1/etc/X11/notion|' \
     -e 's|^\(LUA_DIR=\).*$|\1/usr|' \
     -e 's|^\(X11_PREFIX=\).*$|\1/usr|' \
+    -e 's|^\(X11_LIBS=\).*$|\1`pkg-config --libs x11 xext`|' \
     -e 's|^\(LIBDIR=\).*$|\1%{_libdir}|' \
     -i system-autodetect.mk
 
@@ -145,12 +146,13 @@ install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/*.mk $RPM_BUILD_ROOT%{_inclu
 
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_includedir}/notion/
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/version.h $RPM_BUILD_ROOT%{_includedir}/notion/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_datadir}/notion/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_includedir}/notion/
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/libextl
 install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/notion/libextl/
 install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_includedir}/notion/
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/libextl
+#mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
+#mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/libextl
 
 #install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/libs.mk $RPM_BUILD_ROOT%{_datadir}/notion/build/
 #install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_datadir}/notion/
@@ -158,9 +160,13 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/libextl
 #install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_datadir}/notion/libextl/
 #install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_datadir}/notion/
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
+#mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
+#for i in rules.mk system-inc.mk; do
+#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_datadir}/notion/build/
+#done
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/build
 for i in rules.mk system-inc.mk; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_datadir}/notion/build/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/notion/build/
 done
 
 mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
@@ -174,7 +180,7 @@ done
 %{_libdir}/%{name}/bin/*
 %{_libdir}/%{name}/lc/*
 %{_libdir}/%{name}/mod/*
-%{_libdir}/%{name}/libextl/*
+#%{_libdir}/%{name}/libextl/*
 %lang(cs) %{_mandir}/cs/*
 %lang(fi) %{_mandir}/fi/*
 %{_mandir}/man1/*
