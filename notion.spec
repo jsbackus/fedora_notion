@@ -162,7 +162,6 @@ done
 %{_libdir}/%{name}/bin/*
 %{_libdir}/%{name}/lc/*
 %{_libdir}/%{name}/mod/*
-#%{_libdir}/%{name}/libextl/*
 %lang(cs) %{_mandir}/cs/*
 %lang(fi) %{_mandir}/fi/*
 %{_mandir}/man1/*
