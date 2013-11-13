@@ -145,15 +145,18 @@ install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/*.mk $RPM_BUILD_ROOT%{_inclu
 
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_includedir}/notion/
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/version.h $RPM_BUILD_ROOT%{_includedir}/notion/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_datadir}/notion/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/notion/libextl/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_includedir}/notion/
 
-mkdir -p $RPM_BUILD_ROOT%{_libdir}/notion/build
-mkdir -p $RPM_BUILD_ROOT%{_libdir}/notion/libextl
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/libextl
 
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/libs.mk $RPM_BUILD_ROOT%{_libdir}/notion/build/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_libdir}/notion/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_libdir}/notion/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_libdir}/notion/libextl/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_libdir}/notion/
+#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/libs.mk $RPM_BUILD_ROOT%{_datadir}/notion/build/
+#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_datadir}/notion/
+#install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_datadir}/notion/
+#install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_datadir}/notion/libextl/
+#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_datadir}/notion/
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
 for i in rules.mk system-inc.mk; do
@@ -201,13 +204,13 @@ done
 %files devel
 %{_defaultdocdir}/%{name}-devel-%{version}/*
 %{_includedir}/%{name}/*
-%{_libdir}/%{name}/build/libs.mk
-%{_libdir}/%{name}/config.h
-%{_libdir}/%{name}/install-sh
-%{_libdir}/%{name}/libextl/libextl-mkexports
-%{_libdir}/%{name}/system-autodetect.mk
-%{_datadir}/%{name}/build/rules.mk
-%{_datadir}/%{name}/build/system-inc.mk
+#%{_libdir}/%{name}/build/libs.mk
+#%{_libdir}/%{name}/config.h
+#%{_libdir}/%{name}/install-sh
+#%{_libdir}/%{name}/libextl/libextl-mkexports
+#%{_libdir}/%{name}/system-autodetect.mk
+#%{_datadir}/%{name}/build/rules.mk
+#%{_datadir}/%{name}/build/system-inc.mk
 
 %changelog
 * Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
