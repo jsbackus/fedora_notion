@@ -105,8 +105,8 @@ make %{?_smp_mflags}
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
 make TOPDIR=.. all
 
-%check
-make test
+#%check
+#make test
 
 %install
 #rm -rf $RPM_BUILD_ROOT
