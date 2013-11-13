@@ -49,7 +49,7 @@ Features include:
 %package contrib
 Summary:        3rd party scripts for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-License:        GPLv3
+License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LGPLv2+ and GPL+ and GPLv2 and BSD and 
 BuildArch:      noarch
 
 Requires:       terminus-fonts
@@ -63,6 +63,9 @@ such as:
 * Miscellaneous support scripts
 * Status monitors for the status bar
 * Additional styles
+
+Scripts are installed into /usr/share/notion/contrib. To use,
+copy/link the script(s) you want into ~/.notion and restart Notion.
 
 %package doc
 Summary:        Documentation for the Notion window manager
@@ -103,7 +106,7 @@ cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
 make TOPDIR=.. all
 
 %check
-#make test
+make test
 
 %install
 #rm -rf $RPM_BUILD_ROOT
