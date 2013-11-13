@@ -7,10 +7,8 @@ License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/notion-3-2013030200-src.tar.bz2
 #Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
-# The doc package was pulled from upstream's git repo. Use the following command:
-# 
 Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc-3-2013030200.tar.bz2
-#
+# notion.desktop can also be found in git repo https://github.com/jsbackus/fedora_notion.git
 Source2:        https://www.dropbox.com/sh/n1icl72l63dy9tr/Qurc5REVFy/notion.desktop
 
 Patch0:         https://www.dropbox.com/sh/n1icl72l63dy9tr/QlpDOhk8Vc/notion-3.2013030200.p00-man-utf8.patch
@@ -49,10 +47,11 @@ Features include:
 %package contrib
 Summary:        3rd party scripts for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LGPLv2+ and GPL+ and GPLv2 and BSD and 
+License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LGPLv2+ and GPL+ and GPLv2 and BSD
 BuildArch:      noarch
 
 Requires:       terminus-fonts
+# These don't seem to work yet...
 #Requires:       bitstream-vera-sans-fonts
 #Requires:       artwiz-aleczapka-snap-fonts
 
@@ -106,11 +105,7 @@ make %{?_smp_mflags}
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
 make TOPDIR=.. all
 
-#%check
-#make test
-
 %install
-#rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
 
@@ -151,19 +146,6 @@ mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/libextl
 install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/notion/libextl/
 install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_includedir}/notion/
 
-#mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
-#mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/libextl
-
-#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/libs.mk $RPM_BUILD_ROOT%{_datadir}/notion/build/
-#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_datadir}/notion/
-#install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_datadir}/notion/
-#install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_datadir}/notion/libextl/
-#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_datadir}/notion/
-
-#mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/build
-#for i in rules.mk system-inc.mk; do
-#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_datadir}/notion/build/
-#done
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/build
 for i in rules.mk system-inc.mk; do
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/notion/build/
@@ -210,15 +192,12 @@ done
 %files devel
 %{_defaultdocdir}/%{name}-devel-%{version}/*
 %{_includedir}/%{name}/*
-#%{_libdir}/%{name}/build/libs.mk
-#%{_libdir}/%{name}/config.h
-#%{_libdir}/%{name}/install-sh
-#%{_libdir}/%{name}/libextl/libextl-mkexports
-#%{_libdir}/%{name}/system-autodetect.mk
-#%{_datadir}/%{name}/build/rules.mk
-#%{_datadir}/%{name}/build/system-inc.mk
 
 %changelog
 * Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
 - Initial addition to Fedora.
 
+* Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
+- Modified devel to place all files in /usr/include
+- Added sed statment to alter X11_LIBS= in system-autodetect.mk to use pkgconfig.
+- Patched fonts in styles scripts to use valid 100dpi fonts.
