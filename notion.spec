@@ -15,6 +15,7 @@ Patch0:         https://www.dropbox.com/sh/n1icl72l63dy9tr/QlpDOhk8Vc/notion-3.2
 Patch1:         https://www.dropbox.com/sh/n1icl72l63dy9tr/Pc9uyH5Boo/notion-3.2013030200.p01-fsf_addr.patch
 Patch2:         https://www.dropbox.com/sh/n1icl72l63dy9tr/dwIWWPddTE/notion-doc-3.2013030200.p02-css_newline.patch
 Patch3:         https://www.dropbox.com/sh/n1icl72l63dy9tr/_4wS0oLCEX/notion-3.2013030200.p03-ChangeLog_update.patch
+Patch4:         notion-3.2013030200.p04-fonts.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -90,6 +91,7 @@ tar -xvf %SOURCE1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
     -e 's|^\(ETCDIR=\).*$|\1/etc/X11/notion|' \
