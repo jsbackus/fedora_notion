@@ -47,7 +47,6 @@ Features include:
 
 %package contrib
 Summary:        3rd party scripts for the Notion window manager
-Requires:       %{name}%{?_isa} = %{version}-%{release}
 License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LGPLv2+ and GPL+ and GPLv2 and BSD
 BuildArch:      noarch
 
@@ -69,7 +68,6 @@ copy/link the script(s) you want into ~/.notion and restart Notion.
 
 %package doc
 Summary:        Documentation for the Notion window manager
-Requires:       %{name}%{?_isa} = %{version}-%{release}
 License:        GFDL
 BuildArch:      noarch
 %description doc
