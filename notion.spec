@@ -38,8 +38,6 @@ BuildRequires:  texlive-collection-latexextra
 
 Requires:       xterm
 Requires:       xorg-x11-utils
-# This package provides Helvetica 12px.
-#Requires:       xorg-x11-fonts-75dpi
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
@@ -56,9 +54,6 @@ License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LG
 BuildArch:      noarch
 
 Requires:       terminus-fonts
-# These don't seem to work yet...
-#Requires:       bitstream-vera-sans-fonts
-#Requires:       artwiz-aleczapka-snap-fonts
 
 %description contrib
 This package contains a number of scripts from third parties for Notion, 
@@ -189,6 +184,7 @@ done
 - Modified devel to place all files in /usr/include
 - Added sed statment to alter X11_LIBS= in system-autodetect.mk to use pkgconfig.
 - Patched fonts in styles scripts to use valid 100dpi fonts.
+- Changed to doc macro instead of specifying where to install docs.
 
 * Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
 - Initial addition to Fedora.
