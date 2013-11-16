@@ -11,10 +11,15 @@ Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc
 # notion.desktop can also be found in git repo https://github.com/jsbackus/fedora_notion.git
 Source2:        https://www.dropbox.com/sh/n1icl72l63dy9tr/Qurc5REVFy/notion.desktop
 
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch0:         https://www.dropbox.com/sh/n1icl72l63dy9tr/QlpDOhk8Vc/notion-3.2013030200.p00-man-utf8.patch
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch1:         https://www.dropbox.com/sh/n1icl72l63dy9tr/Pc9uyH5Boo/notion-3.2013030200.p01-fsf_addr.patch
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch2:         https://www.dropbox.com/sh/n1icl72l63dy9tr/dwIWWPddTE/notion-doc-3.2013030200.p02-css_newline.patch
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch3:         https://www.dropbox.com/sh/n1icl72l63dy9tr/_4wS0oLCEX/notion-3.2013030200.p03-ChangeLog_update.patch
+# Patch submitted to upstream via e-mail on 11/16/2013
 Patch4:         https://www.dropbox.com/s/ptvk85d3g6h22pn/notion-3.2013030200.p04-fonts.patch
 
 BuildRequires:  gettext
