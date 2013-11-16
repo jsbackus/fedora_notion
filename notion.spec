@@ -11,10 +11,15 @@ Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc
 # notion.desktop can also be found in git repo https://github.com/jsbackus/fedora_notion.git
 Source2:        https://www.dropbox.com/sh/n1icl72l63dy9tr/Qurc5REVFy/notion.desktop
 
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch0:         https://www.dropbox.com/sh/n1icl72l63dy9tr/QlpDOhk8Vc/notion-3.2013030200.p00-man-utf8.patch
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch1:         https://www.dropbox.com/sh/n1icl72l63dy9tr/Pc9uyH5Boo/notion-3.2013030200.p01-fsf_addr.patch
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch2:         https://www.dropbox.com/sh/n1icl72l63dy9tr/dwIWWPddTE/notion-doc-3.2013030200.p02-css_newline.patch
+# Patch submitted to upstream via e-mail on 11/3/2013
 Patch3:         https://www.dropbox.com/sh/n1icl72l63dy9tr/_4wS0oLCEX/notion-3.2013030200.p03-ChangeLog_update.patch
+# Patch submitted to upstream via e-mail on 11/16/2013
 Patch4:         https://www.dropbox.com/s/ptvk85d3g6h22pn/notion-3.2013030200.p04-fonts.patch
 
 BuildRequires:  gettext
@@ -118,11 +123,6 @@ for i in keybindings scripts statusbar statusd styles; do
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/* $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
 done
 
-mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}
-for i in LICENSE README; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}/
-done
-
 # Doc subpackage
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
 make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version} TOPDIR=..
@@ -151,11 +151,6 @@ for i in rules.mk system-inc.mk; do
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/notion/build/
 done
 
-mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
-for i in LICENSE README; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
-done
-
 %files
 %config(noreplace) %{_sysconfdir}/%{name}/*
 %{_bindir}/*
@@ -175,22 +170,19 @@ done
 %{_datadir}/%{name}/welcome.txt
 %lang(fi) %{_datadir}/%{name}/welcome.fi.txt
 %lang(cs) %{_datadir}/%{name}/welcome.cs.txt
-%{_defaultdocdir}/%{name}-%{version}/README
-%{_defaultdocdir}/%{name}-%{version}/LICENSE
-%{_defaultdocdir}/%{name}-%{version}/ChangeLog
-%{_defaultdocdir}/%{name}-%{version}/RELNOTES
+%doc README LICENSE ChangeLog RELNOTES
 %attr(0644, root, root) %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
 %{_datadir}/%{name}/contrib
-%{_defaultdocdir}/%{name}-contrib-%{version}/*
+%doc contrib/README contrib/LICENSE
 
 %files doc
 %{_defaultdocdir}/%{name}-doc-%{version}/*
 
 %files devel
-%{_defaultdocdir}/%{name}-devel-%{version}/*
 %{_includedir}/%{name}/*
+%doc README LICENSE
 
 %changelog
 * Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
