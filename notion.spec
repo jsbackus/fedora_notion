@@ -15,7 +15,7 @@ Patch0:         https://www.dropbox.com/sh/n1icl72l63dy9tr/QlpDOhk8Vc/notion-3.2
 Patch1:         https://www.dropbox.com/sh/n1icl72l63dy9tr/Pc9uyH5Boo/notion-3.2013030200.p01-fsf_addr.patch
 Patch2:         https://www.dropbox.com/sh/n1icl72l63dy9tr/dwIWWPddTE/notion-doc-3.2013030200.p02-css_newline.patch
 Patch3:         https://www.dropbox.com/sh/n1icl72l63dy9tr/_4wS0oLCEX/notion-3.2013030200.p03-ChangeLog_update.patch
-Patch4:         notion-3.2013030200.p04-fonts.patch
+Patch4:         https://www.dropbox.com/s/ptvk85d3g6h22pn/notion-3.2013030200.p04-fonts.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -92,7 +92,7 @@ tar -xvf %SOURCE1
 %patch4 -p1
 
 sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
-    -e 's|^\(ETCDIR=\).*$|\1/etc/X11/notion|' \
+    -e 's|^\(ETCDIR=\).*$|\1/etc/notion|' \
     -e 's|^\(LUA_DIR=\).*$|\1/usr|' \
     -e 's|^\(X11_PREFIX=\).*$|\1/usr|' \
     -e 's|^\(X11_LIBS=\).*$|\1`pkg-config --libs x11 xext`|' \
@@ -157,7 +157,7 @@ for i in LICENSE README; do
 done
 
 %files
-%config(noreplace) %{_sysconfdir}/X11/%{name}/*
+%config(noreplace) %{_sysconfdir}/%{name}/*
 %{_bindir}/*
 %{_libdir}/%{name}/bin/*
 %{_libdir}/%{name}/lc/*
