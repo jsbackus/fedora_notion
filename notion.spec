@@ -107,10 +107,10 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
     -i system-autodetect.mk
 
 %build
-make %{?_smp_mflags} %{optflags}
+make %{?_smp_mflags}
 
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
-make %{?_smp_mflags} %{optflags} TOPDIR=.. all
+make %{?_smp_mflags} TOPDIR=.. all
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
@@ -212,7 +212,6 @@ done
 - Switched to desktop-file-install and added desktop-file-validate.
 - Changed files section such that package owns whole directory instead of 
   just individual files.
-- Added optflags to make commands in install.
 
 * Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
 - Modified devel to place all files in /usr/include
