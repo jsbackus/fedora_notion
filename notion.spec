@@ -1,6 +1,6 @@
 Name:           notion
 Version:        3.2013030200
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Tabbed, tiling window manager forked from Ion3
 
 License:        LGPLv2 with exceptions
@@ -12,15 +12,16 @@ Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc
 Source2:        https://www.dropbox.com/sh/n1icl72l63dy9tr/Qurc5REVFy/notion.desktop
 
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch0:         https://www.dropbox.com/sh/n1icl72l63dy9tr/QlpDOhk8Vc/notion-3.2013030200.p00-man-utf8.patch
+Patch0:         notion-3.2013030200.p00-man-utf8.patch
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch1:         https://www.dropbox.com/sh/n1icl72l63dy9tr/Pc9uyH5Boo/notion-3.2013030200.p01-fsf_addr.patch
+Patch1:         notion-3.2013030200.p01-fsf_addr.patch
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch2:         https://www.dropbox.com/sh/n1icl72l63dy9tr/dwIWWPddTE/notion-doc-3.2013030200.p02-css_newline.patch
+Patch2:         notion-doc-3.2013030200.p02-css_newline.patch
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch3:         https://www.dropbox.com/sh/n1icl72l63dy9tr/_4wS0oLCEX/notion-3.2013030200.p03-ChangeLog_update.patch
+Patch3:         notion-3.2013030200.p03-ChangeLog_update.patch
 # Patch submitted to upstream via e-mail on 11/16/2013
-Patch4:         https://www.dropbox.com/s/ptvk85d3g6h22pn/notion-3.2013030200.p04-fonts.patch
+Patch4:         notion-3.2013030200.p04-fonts.patch
+Patch5:         notion-3.2013030200.p05-fix_orphaned_statusd.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -38,8 +39,6 @@ BuildRequires:  texlive-collection-latexextra
 
 Requires:       xterm
 Requires:       xorg-x11-utils
-# This package provides Helvetica 12px.
-#Requires:       xorg-x11-fonts-75dpi
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
@@ -56,9 +55,6 @@ License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LG
 BuildArch:      noarch
 
 Requires:       terminus-fonts
-# These don't seem to work yet...
-#Requires:       bitstream-vera-sans-fonts
-#Requires:       artwiz-aleczapka-snap-fonts
 
 %description contrib
 This package contains a number of scripts from third parties for Notion, 
@@ -75,6 +71,7 @@ copy/link the script(s) you want into ~/.notion and restart Notion.
 Summary:        Documentation for the Notion window manager
 License:        GFDL
 BuildArch:      noarch
+
 %description doc
 This package contains the documentation for extending and customizing 
 Notion.
@@ -82,6 +79,7 @@ Notion.
 %package devel
 Summary:        Development files for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+
 %description devel
 This package contains the development files necessary for extending and 
 customizing Notion.
@@ -95,6 +93,7 @@ tar -xvf %SOURCE1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
     -e 's|^\(ETCDIR=\).*$|\1/etc/notion|' \
@@ -108,7 +107,7 @@ sed -e 's|^\(PREFIX=\).*$|\1/usr|' \
 make %{?_smp_mflags}
 
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
-make TOPDIR=.. all
+make %{?_smp_mflags} TOPDIR=.. all
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
@@ -147,9 +146,13 @@ install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/*.mk $RPM_BUILD_ROOT%{_inclu
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_includedir}/notion/
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/version.h $RPM_BUILD_ROOT%{_includedir}/notion/
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_includedir}/notion/
+
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/libextl
 install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/notion/libextl/
 install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_includedir}/notion/
+
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/libmainloop
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/notion/libmainloop/
 
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/build
 for i in rules.mk system-inc.mk; do
@@ -198,6 +201,12 @@ done
 %{_includedir}/%{name}/*
 
 %changelog
+* Sun Nov  24 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-3
+- Added patch for ion-statusd bug.
+- Removed URLs for patches, as per review.
+- Added missing libmainloop/rx.mk to -devel.
+- Added missing compiler flags to make for docs in build.
+
 * Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
 - Modified devel to place all files in /usr/include
 - Added sed statment to alter X11_LIBS= in system-autodetect.mk to use pkgconfig.
