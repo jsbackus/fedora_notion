@@ -110,7 +110,7 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
 make %{?_smp_mflags}
 
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
-make %{?_smp_mflags} TOPDIR=.. all
+make TOPDIR=.. all
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
@@ -206,7 +206,6 @@ done
 - Added patch for ion-statusd bug.
 - Removed URLs for patches, as per review.
 - Added missing libmainloop/rx.mk to -devel.
-- Added missing compiler flags to make for docs in build.
 - Switched to all references to package version to use variables.
 - Switched to find_lang from lang
 - Switched to desktop-file-install and added desktop-file-validate.
