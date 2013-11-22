@@ -11,7 +11,9 @@ URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/notion-%{majorver}-%{datever}-src.tar.bz2
 #Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
 Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc-%{majorver}-%{datever}.tar.bz2
-Source2:        https://github.com/jsbackus/fedora_notion/blob/master/notion.desktop
+# notion.desktop can also be found in git repo https://github.com/jsbackus/fedora_notion.git
+Source2:        https://www.dropbox.com/sh/n1icl72l63dy9tr/Qurc5REVFy/notion.desktop
+
 # Patch submitted to upstream via e-mail on 11/3/2013
 Patch0:         notion-%{majorver}.%{datever}.p00-man-utf8.patch
 # Patch submitted to upstream via e-mail on 11/3/2013
@@ -206,6 +208,11 @@ done
 - Added missing libmainloop/rx.mk to -devel.
 - Added missing compiler flags to make for docs in build.
 - Switched to all references to package version to use variables.
+- Switched to find_lang from lang
+- Switched to desktop-file-install and added desktop-file-validate.
+- Changed files section such that package owns whole directory instead of 
+  just individual files.
+- Added optflags to make commands in install.
 
 * Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
 - Modified devel to place all files in /usr/include
