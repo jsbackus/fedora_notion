@@ -1,6 +1,7 @@
 %global majorver 3
 %global datever  2013030200
 
+#TODO: Try removing this and running Koji
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:           notion
@@ -10,22 +11,23 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 
 License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
-Source0:        http://downloads.sourceforge.net/project/notion/notion-%{majorver}-%{datever}-src.tar.bz2
+Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
+#TODO: Consider putting up a fork of this repo on GitHub and specifying a "release link"
 #Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
-Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc-%{majorver}-%{datever}.tar.bz2
-Source2:        https://raw.github.com/jsbackus/fedora_notion/master/notion.desktop
+Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/%{name}-doc-%{majorver}-%{datever}.tar.bz2
+Source2:        https://raw.github.com/jsbackus/fedora_notion/master/%{name}.desktop
 
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch0:         notion-%{majorver}.%{datever}.p00-man-utf8.patch
+Patch0:         %{name}-%{majorver}.%{datever}.p00-man-utf8.patch
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch1:         notion-%{majorver}.%{datever}.p01-fsf_addr.patch
+Patch1:         %{name}-%{majorver}.%{datever}.p01-fsf_addr.patch
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch2:         notion-doc-%{majorver}.%{datever}.p02-css_newline.patch
+Patch2:         %{name}-doc-%{majorver}.%{datever}.p02-css_newline.patch
 # Patch submitted to upstream via e-mail on 11/3/2013
-Patch3:         notion-%{majorver}.%{datever}.p03-ChangeLog_update.patch
+Patch3:         %{name}-%{majorver}.%{datever}.p03-ChangeLog_update.patch
 # Patch submitted to upstream via e-mail on 11/16/2013
-Patch4:         notion-%{majorver}.%{datever}.p04-fonts.patch
-Patch5:         notion-%{majorver}.%{datever}.p05-fix_orphaned_statusd.patch
+Patch4:         %{name}-%{majorver}.%{datever}.p04-fonts.patch
+Patch5:         %{name}-%{majorver}.%{datever}.p05-fix_orphaned_statusd.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -81,9 +83,39 @@ BuildArch:      noarch
 This package contains the documentation for extending and customizing 
 Notion.
 
+%package libextl
+Summary:        TODO
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description libextl
+TODO
+This package contains the development files necessary for extending and 
+customizing Notion.
+
+%package libmainloop
+Summary:        TODO
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description libmainloop
+TODO
+This package contains the development files necessary for extending and 
+customizing Notion.
+
+%package libtu
+Summary:        TODO
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description libtu
+TODO
+This package contains the development files necessary for extending and 
+customizing Notion.
+
 %package devel
 Summary:        Development files for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       libextl%{?_isa} = %{version}-%{release}
+Requires:       libmainloop%{?_isa} = %{version}-%{release}
+Requires:       libtu%{?_isa} = %{version}-%{release}
 
 %description devel
 This package contains the development files necessary for extending and 
@@ -115,11 +147,11 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
 %build
 make %{?_smp_mflags}
 
-cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
+cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
 make TOPDIR=.. all 
 
 # Note: -doc won't build w/ ?_smp_mflags.
-#cd $RPM_BUILD_DIR/notion-doc
+#cd $RPM_BUILD_DIR/%{name}-doc
 #make TOPDIR=$RPM_BUILD_DIR/%{buildsubdir} all 
 
 %install
@@ -133,29 +165,43 @@ make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 desktop-file-install --dir=%{buildroot}/%{_datadir}/xsessions %{SOURCE2}
 desktop-file-validate %{buildroot}/%{_datadir}/xsessions/%{name}.desktop
 
+# libextl subpackage
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/libextl
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/*.h $RPM_BUILD_ROOT%{_includedir}/libextl/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/libextl/
+
+# libmainloop subpackage
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/libmainloop
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/*.h $RPM_BUILD_ROOT%{_includedir}/libmainloop/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop/
+
+# libtu subpackage
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/libtu
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/libtu/
+
 # Dev subpackage
 for i in de ioncore libextl libmainloop libtu mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
-  mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/$i/
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i/*.h $RPM_BUILD_ROOT%{_includedir}/notion/$i/
+  mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
 done
 
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/build
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/*.mk $RPM_BUILD_ROOT%{_includedir}/notion/build/ 
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/build
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/*.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/build/ 
 
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_includedir}/notion/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/version.h $RPM_BUILD_ROOT%{_includedir}/notion/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_includedir}/notion/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/version.h $RPM_BUILD_ROOT%{_includedir}/%{name}/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_includedir}/%{name}/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_includedir}/%{name}/
 
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/libextl
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/notion/libextl/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_includedir}/notion/
-
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/libmainloop
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/notion/libmainloop/
-
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/notion/build
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/build
 for i in rules.mk system-inc.mk; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/notion/build/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/%{name}/build/
+done
+
+# Most parts of Notion actually expect these "libraries" to be in the 
+# notion TOPDIR, so we'll create links to keep them happy.
+for i in libextl libmainloop libtu; do
+  ln -s $RPM_BUILD_ROOT%{_includedir}/$i $RPM_BUILD_ROOT%{_includedir}/%{name}/$i
 done
 
 #mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
@@ -165,8 +211,8 @@ done
 
 # contrib subpackage
 for i in keybindings scripts statusbar statusd styles; do
-  mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/* $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
+  mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/* $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
 done
 
 #mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}
@@ -181,7 +227,7 @@ done
 
 # Doc subpackage
 %pre doc
-cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
+cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
 #make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version} TOPDIR=..
 #for i in LICENSE README; do
 #  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version}/
@@ -220,6 +266,18 @@ make install DOCDIR=%{_pkgdocdir} TOPDIR=..
 %files doc
 %doc %{_pkgdocdir}
 #%{_defaultdocdir}/%{name}-doc-%{version}/*
+
+%files libextl
+%doc README LICENSE
+%{_includedir}/libextl
+
+%files libmainloop
+%doc README LICENSE
+%{_includedir}/libmainloop
+
+%files libtu
+%doc README LICENSE
+%{_includedir}/libtu
 
 %files devel
 %doc README LICENSE
