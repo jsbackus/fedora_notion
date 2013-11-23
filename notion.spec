@@ -11,8 +11,7 @@ URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/notion-%{majorver}-%{datever}-src.tar.bz2
 #Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
 Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/notion-doc-%{majorver}-%{datever}.tar.bz2
-# notion.desktop can also be found in git repo https://github.com/jsbackus/fedora_notion.git
-Source2:        https://www.dropbox.com/sh/n1icl72l63dy9tr/Qurc5REVFy/notion.desktop
+Source2:        https://raw.github.com/jsbackus/fedora_notion/master/notion.desktop
 
 # Patch submitted to upstream via e-mail on 11/3/2013
 Patch0:         notion-%{majorver}.%{datever}.p00-man-utf8.patch
@@ -88,6 +87,9 @@ This package contains the development files necessary for extending and
 customizing Notion.
 
 %prep
+#tar -xvf %SOURCE1
+#%patch2 -p1
+
 %setup -q -n %{name}-%{majorver}-%{datever}
 tar -xvf %SOURCE1
 
@@ -104,13 +106,18 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
     -e 's|^\(X11_PREFIX=\).*$|\1%{_prefix}|' \
     -e 's|^\(X11_LIBS=\).*$|\1`pkg-config --libs x11 xext`|' \
     -e 's|^\(LIBDIR=\).*$|\1%{_libdir}|' \
+    -e 's|\(CFLAGS *+*= *\)\(-Os\)|\1 $(RPM_OPT_FLAGS) \2|' \
     -i system-autodetect.mk
 
 %build
 make %{?_smp_mflags}
 
 cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
-make TOPDIR=.. all
+make TOPDIR=.. all 
+
+# Note: -doc won't build w/ ?_smp_mflags.
+#cd $RPM_BUILD_DIR/notion-doc
+#make TOPDIR=$RPM_BUILD_DIR/%{buildsubdir} all 
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
@@ -119,7 +126,7 @@ mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{n
 %find_lang %{name}
 
 # Install and verify desktop file
-desktop-file-install --dir=%{buildroot}/%{_datadir}/xsessions/%{name}.desktop %{SOURCE2}
+desktop-file-install --dir=%{buildroot}/%{_datadir}/xsessions %{SOURCE2}
 desktop-file-validate %{buildroot}/%{_datadir}/xsessions/%{name}.desktop
 
 # contrib subpackage
@@ -174,8 +181,8 @@ done
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
-#%lang(cs) %{_mandir}/cs/*
-#%lang(fi) %{_mandir}/fi/*
+%lang(cs) %{_mandir}/cs/*
+%lang(fi) %{_mandir}/fi/*
 %{_mandir}/man1/*
 #%lang(cs) %{_datadir}/locale/cs/*
 #%lang(de) %{_datadir}/locale/de/*
@@ -188,7 +195,9 @@ done
 %{_defaultdocdir}/%{name}-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-%{version}/ChangeLog
 %{_defaultdocdir}/%{name}-%{version}/RELNOTES
-#%attr(0644, root, root) %{_datadir}/xsessions/%{name}.desktop
+
+# desktop-file-install doesn't 
+%{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
 %{_datadir}/%{name}/contrib
