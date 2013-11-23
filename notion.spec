@@ -1,6 +1,8 @@
 %global majorver 3
 %global datever  2013030200
 
+%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
+
 Name:           notion
 Version:        %{majorver}.%{datever}
 Release:        3%{?dist}
@@ -27,6 +29,7 @@ Patch5:         notion-%{majorver}.%{datever}.p05-fix_orphaned_statusd.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
+BuildRequires:  desktop-file-utils
 BuildRequires:  libXinerama-devel
 BuildRequires:  libXrandr-devel
 #BuildRequires:  lua
@@ -120,32 +123,15 @@ make TOPDIR=.. all
 #make TOPDIR=$RPM_BUILD_DIR/%{buildsubdir} all 
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
-mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
+
+make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
+#mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
 
 %find_lang %{name}
 
 # Install and verify desktop file
 desktop-file-install --dir=%{buildroot}/%{_datadir}/xsessions %{SOURCE2}
 desktop-file-validate %{buildroot}/%{_datadir}/xsessions/%{name}.desktop
-
-# contrib subpackage
-for i in keybindings scripts statusbar statusd styles; do
-  mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/* $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
-done
-
-mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}
-for i in LICENSE README; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}/
-done
-
-# Doc subpackage
-cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
-make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version} TOPDIR=..
-for i in LICENSE README; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version}/
-done
 
 # Dev subpackage
 for i in de ioncore libextl libmainloop libtu mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
@@ -172,12 +158,41 @@ for i in rules.mk system-inc.mk; do
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/notion/build/
 done
 
-mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
-for i in LICENSE README; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
+#mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
+#for i in LICENSE README; do
+#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
+#done
+
+# contrib subpackage
+for i in keybindings scripts statusbar statusd styles; do
+  mkdir -p $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
+  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/* $RPM_BUILD_ROOT%{_datadir}/notion/contrib/$i/
 done
 
+#mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}
+#for i in LICENSE README; do
+#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}/
+#done
+
+#mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}
+#for i in LICENSE README; do
+#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_pkgdocdir}/$i
+#done
+
+# Doc subpackage
+%pre doc
+cd $RPM_BUILD_DIR/%{buildsubdir}/notion-doc
+#make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version} TOPDIR=..
+#for i in LICENSE README; do
+#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version}/
+#done
+make install DOCDIR=%{_pkgdocdir} TOPDIR=..
+#for i in LICENSE README; do
+#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_pkgdocdir}/
+#done
+
 %files -f %{name}.lang
+%doc README LICENSE ChangeLog RELNOTES
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
@@ -191,24 +206,24 @@ done
 %{_datadir}/%{name}
 #%lang(fi) %{_datadir}/%{name}/welcome.fi.txt
 #%lang(cs) %{_datadir}/%{name}/welcome.cs.txt
-%{_defaultdocdir}/%{name}-%{version}/README
-%{_defaultdocdir}/%{name}-%{version}/LICENSE
-%{_defaultdocdir}/%{name}-%{version}/ChangeLog
-%{_defaultdocdir}/%{name}-%{version}/RELNOTES
+#%{_defaultdocdir}/%{name}-%{version}/README
+#%{_defaultdocdir}/%{name}-%{version}/LICENSE
+#%{_defaultdocdir}/%{name}-%{version}/ChangeLog
+#%{_defaultdocdir}/%{name}-%{version}/RELNOTES
 
-# desktop-file-install doesn't 
 %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
+%doc README LICENSE
 %{_datadir}/%{name}/contrib
-%{_defaultdocdir}/%{name}-contrib-%{version}/*
 
 %files doc
-%{_defaultdocdir}/%{name}-doc-%{version}/*
+%doc %{_pkgdocdir}
+#%{_defaultdocdir}/%{name}-doc-%{version}/*
 
 %files devel
-%{_defaultdocdir}/%{name}-devel-%{version}/*
-%{_includedir}/%{name}/*
+%doc README LICENSE
+%{_includedir}/%{name}
 
 %changelog
 * Sun Nov  24 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-3
