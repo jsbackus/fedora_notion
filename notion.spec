@@ -173,7 +173,7 @@ install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUI
 # libmainloop subpackage
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/libmainloop
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/*.h $RPM_BUILD_ROOT%{_includedir}/libmainloop/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/libmainloop/
 
 # libtu subpackage
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/libtu
