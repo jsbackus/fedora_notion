@@ -84,29 +84,29 @@ BuildArch:      noarch
 This package contains the documentation for extending and customizing 
 Notion.
 
-%package libextl
+%package -n libextl
 Summary:        TODO
 BuildArch:      noarch
 
-%description libextl
+%description -n libextl
 TODO
 This package contains the development files necessary for extending and 
 customizing Notion.
 
-%package libmainloop
+%package -n libmainloop
 Summary:        TODO
 BuildArch:      noarch
 
-%description libmainloop
+%description -n libmainloop
 TODO
 This package contains the development files necessary for extending and 
 customizing Notion.
 
-%package libtu
+%package -n libtu
 Summary:        TODO
 BuildArch:      noarch
 
-%description libtu
+%description -n libtu
 TODO
 This package contains the development files necessary for extending and 
 customizing Notion.
@@ -127,7 +127,13 @@ customizing Notion.
 #%patch2 -p1
 
 %setup -q -n %{name}-%{majorver}-%{datever}
+
+# Decompress doc pkg
 tar -xvf %SOURCE1
+
+# Screwy name is due to how GitHub names releases vs. directories. Once 
+# upstream creates an official release this will need to be adjusted.
+mv %{name}-doc-%{name}-doc-%{majorver}-%{datever} %{name}-doc
 
 %patch0 -p1
 %patch1 -p1
@@ -148,9 +154,7 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
 %build
 make %{?_smp_mflags}
 
-# Screwy name is due to how GitHub names releases vs. directories. Once 
-# upstream creates an official release this will need to be adjusted.
-cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{name}-doc-%{majorver}-%{datever}
+cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
 make TOPDIR=.. all 
 
 # Note: -doc won't build w/ ?_smp_mflags.
@@ -183,7 +187,7 @@ mkdir -p $RPM_BUILD_ROOT%{_includedir}/libtu
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/libtu/
 
 # Dev subpackage
-for i in de ioncore libextl libmainloop libtu mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
+for i in de ioncore mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
   mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
 done
@@ -204,7 +208,7 @@ done
 # Most parts of Notion actually expect these "libraries" to be in the 
 # notion TOPDIR, so we'll create links to keep them happy.
 for i in libextl libmainloop libtu; do
-  ln -s $RPM_BUILD_ROOT%{_includedir}/$i $RPM_BUILD_ROOT%{_includedir}/%{name}/$i
+  ln -s "../$i" $RPM_BUILD_ROOT%{_includedir}/%{name}/$i
 done
 
 #mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
@@ -270,15 +274,15 @@ make install DOCDIR=%{_pkgdocdir} TOPDIR=..
 %doc %{_pkgdocdir}
 #%{_defaultdocdir}/%{name}-doc-%{version}/*
 
-%files libextl
+%files -n libextl
 %doc README LICENSE
 %{_includedir}/libextl
 
-%files libmainloop
+%files -n libmainloop
 %doc README LICENSE
 %{_includedir}/libmainloop
 
-%files libtu
+%files -n libtu
 %doc README LICENSE
 %{_includedir}/libtu
 
