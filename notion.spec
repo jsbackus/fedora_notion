@@ -14,7 +14,8 @@ URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
 #TODO: Consider putting up a fork of this repo on GitHub and specifying a "release link"
 #Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
-Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/%{name}-doc-%{majorver}-%{datever}.tar.bz2
+Source1:        https://github.com/jsbackus/notion-doc/archive/%{name}-doc-3-2013030200.tar.gz
+#Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/%{name}-doc-%{majorver}-%{datever}.tar.bz2
 Source2:        https://raw.github.com/jsbackus/fedora_notion/master/%{name}.desktop
 
 # Patch submitted to upstream via e-mail on 11/3/2013
@@ -85,7 +86,7 @@ Notion.
 
 %package libextl
 Summary:        TODO
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+BuildArch:      noarch
 
 %description libextl
 TODO
@@ -94,7 +95,7 @@ customizing Notion.
 
 %package libmainloop
 Summary:        TODO
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+BuildArch:      noarch
 
 %description libmainloop
 TODO
@@ -103,7 +104,7 @@ customizing Notion.
 
 %package libtu
 Summary:        TODO
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+BuildArch:      noarch
 
 %description libtu
 TODO
@@ -147,7 +148,9 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
 %build
 make %{?_smp_mflags}
 
-cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
+# Screwy name is due to how GitHub names releases vs. directories. Once 
+# upstream creates an official release this will need to be adjusted.
+cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{name}-doc-%{majorver}-%{datever}
 make TOPDIR=.. all 
 
 # Note: -doc won't build w/ ?_smp_mflags.
