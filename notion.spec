@@ -137,17 +137,19 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
     -e 's|\(CFLAGS *+*= *\)\(-Os\)|\1 $(RPM_OPT_FLAGS) \2|' \
     -i system-autodetect.mk
 
+# Installing docs to a temporary directory so that we can pick them up with 
+# doc macro later.
+mkdir _docs_staging
+
 %build
-make %{?_smp_mflags}
+make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
 # Note: -doc won't build w/ ?_smp_mflags.
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
-# Installing docs to a temporary directory so that we can pick them up with 
-# doc macro later.
 make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=.. all
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 
 %find_lang %{name} --with-man
 
