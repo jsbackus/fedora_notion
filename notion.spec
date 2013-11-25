@@ -1,9 +1,6 @@
 %global majorver 3
 %global datever  2013030200
 
-#TODO: Try removing this and running Koji
-%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
-
 Name:           notion
 Version:        %{majorver}.%{datever}
 Release:        3%{?dist}
@@ -12,10 +9,8 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
-#TODO: Consider putting up a fork of this repo on GitHub and specifying a "release link"
-#Source1:        git://notion.git.sourceforge.net/gitroot/notion/notion-doc
-Source1:        https://github.com/jsbackus/notion-doc/archive/%{name}-doc-3-2013030200.tar.gz
-#Source1:        https://www.dropbox.com/sh/n1icl72l63dy9tr/jFYmjjqH-f/%{name}-doc-%{majorver}-%{datever}.tar.bz2
+#Source1:        https://github.com/jsbackus/notion-doc/archive/%{name}-doc-3-2013030200.tar.gz
+Source1:	https://fedorahosted.org/released/%{name}/%{name}-doc-3-2013030200.tar.bz2
 Source2:        https://raw.github.com/jsbackus/fedora_notion/master/%{name}.desktop
 
 # Patch submitted to upstream via e-mail on 11/3/2013
@@ -114,18 +109,15 @@ customizing Notion.
 %package devel
 Summary:        Development files for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       libextl%{?_isa} = %{version}-%{release}
-Requires:       libmainloop%{?_isa} = %{version}-%{release}
-Requires:       libtu%{?_isa} = %{version}-%{release}
+Requires:       libextl = %{version}-%{release}
+Requires:       libmainloop = %{version}-%{release}
+Requires:       libtu = %{version}-%{release}
 
 %description devel
 This package contains the development files necessary for extending and 
 customizing Notion.
 
 %prep
-#tar -xvf %SOURCE1
-#%patch2 -p1
-
 %setup -q -n %{name}-%{majorver}-%{datever}
 
 # Decompress doc pkg
@@ -133,7 +125,7 @@ tar -xvf %SOURCE1
 
 # Screwy name is due to how GitHub names releases vs. directories. Once 
 # upstream creates an official release this will need to be adjusted.
-mv %{name}-doc-%{name}-doc-%{majorver}-%{datever} %{name}-doc
+#mv %{name}-doc-%{name}-doc-%{majorver}-%{datever} %{name}-doc
 
 %patch0 -p1
 %patch1 -p1
@@ -154,19 +146,15 @@ sed -e 's|^\(PREFIX=\).*$|\1%{_prefix}|' \
 %build
 make %{?_smp_mflags}
 
-cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
-make TOPDIR=.. all 
-
 # Note: -doc won't build w/ ?_smp_mflags.
-#cd $RPM_BUILD_DIR/%{name}-doc
-#make TOPDIR=$RPM_BUILD_DIR/%{buildsubdir} all 
+cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
+make TOPDIR=.. all
 
 %install
-
 make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 #mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
 
-%find_lang %{name}
+%find_lang %{name} --with-man
 
 # Install and verify desktop file
 desktop-file-install --dir=%{buildroot}/%{_datadir}/xsessions %{SOURCE2}
@@ -211,46 +199,23 @@ for i in libextl libmainloop libtu; do
   ln -s "../$i" $RPM_BUILD_ROOT%{_includedir}/%{name}/$i
 done
 
-#mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
-#for i in LICENSE README; do
-#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-devel-%{version}/
-#done
-
 # contrib subpackage
 for i in keybindings scripts statusbar statusd styles; do
   mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/* $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
 done
 
-#mkdir -p $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}
-#for i in LICENSE README; do
-#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-contrib-%{version}/
-#done
-
-#mkdir -p $RPM_BUILD_ROOT%{_pkgdocdir}
-#for i in LICENSE README; do
-#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i $RPM_BUILD_ROOT%{_pkgdocdir}/$i
-#done
-
 # Doc subpackage
-%pre doc
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
-#make install DOCDIR=$RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version} TOPDIR=..
-#for i in LICENSE README; do
-#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-doc-%{version}/
-#done
-make install DOCDIR=%{_pkgdocdir} TOPDIR=..
-#for i in LICENSE README; do
-#  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_ROOT%{_pkgdocdir}/
-#done
+make install DOCDIR=%{_builddir}/_docs_staging TOPDIR=..
 
 %files -f %{name}.lang
 %doc README LICENSE ChangeLog RELNOTES
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
-%lang(cs) %{_mandir}/cs/*
-%lang(fi) %{_mandir}/fi/*
+#%lang(cs) %{_mandir}/cs/*
+#%lang(fi) %{_mandir}/fi/*
 %{_mandir}/man1/*
 #%lang(cs) %{_datadir}/locale/cs/*
 #%lang(de) %{_datadir}/locale/de/*
@@ -271,7 +236,7 @@ make install DOCDIR=%{_pkgdocdir} TOPDIR=..
 %{_datadir}/%{name}/contrib
 
 %files doc
-%doc %{_pkgdocdir}
+%doc _docs_staging/*
 #%{_defaultdocdir}/%{name}-doc-%{version}/*
 
 %files -n libextl
