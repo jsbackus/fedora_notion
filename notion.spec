@@ -9,9 +9,8 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
-#Source1:        https://github.com/jsbackus/notion-doc/archive/%{name}-doc-3-2013030200.tar.gz
-Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-3-2013030200.tar.bz2
-Source2:        https://raw.github.com/jsbackus/fedora_notion/master/%{name}.desktop
+Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.bz2
+Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
 # Patch submitted to upstream via e-mail on 11/3/2013
 Patch0:         %{name}-%{majorver}.%{datever}.p00-man-utf8.patch
@@ -30,7 +29,6 @@ BuildRequires:  pkgconfig
 BuildRequires:  desktop-file-utils
 BuildRequires:  libXinerama-devel
 BuildRequires:  libXrandr-devel
-#BuildRequires:  lua
 BuildRequires:  lua-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libSM-devel
@@ -123,10 +121,6 @@ customizing Notion.
 # Decompress doc pkg
 tar -xvf %SOURCE1
 
-# Screwy name is due to how GitHub names releases vs. directories. Once 
-# upstream creates an official release this will need to be adjusted.
-#mv %{name}-doc-%{name}-doc-%{majorver}-%{datever} %{name}-doc
-
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -148,11 +142,12 @@ make %{?_smp_mflags}
 
 # Note: -doc won't build w/ ?_smp_mflags.
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
-make TOPDIR=.. all
+# Installing docs to a temporary directory so that we can pick them up with 
+# doc macro later.
+make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=.. all
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
-#mv $RPM_BUILD_ROOT%{_defaultdocdir}/%{name} $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-%{version}
+make install DESTDIR=$RPM_BUILD_ROOT
 
 %find_lang %{name} --with-man
 
@@ -214,20 +209,8 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
-#%lang(cs) %{_mandir}/cs/*
-#%lang(fi) %{_mandir}/fi/*
 %{_mandir}/man1/*
-#%lang(cs) %{_datadir}/locale/cs/*
-#%lang(de) %{_datadir}/locale/de/*
-#%lang(fi) %{_datadir}/locale/fi/*
-#%lang(fr) %{_datadir}/locale/fr/*
 %{_datadir}/%{name}
-#%lang(fi) %{_datadir}/%{name}/welcome.fi.txt
-#%lang(cs) %{_datadir}/%{name}/welcome.cs.txt
-#%{_defaultdocdir}/%{name}-%{version}/README
-#%{_defaultdocdir}/%{name}-%{version}/LICENSE
-#%{_defaultdocdir}/%{name}-%{version}/ChangeLog
-#%{_defaultdocdir}/%{name}-%{version}/RELNOTES
 
 %{_datadir}/xsessions/%{name}.desktop
 
@@ -237,7 +220,6 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files doc
 %doc _docs_staging/*
-#%{_defaultdocdir}/%{name}-doc-%{version}/*
 
 %files -n libextl
 %doc README LICENSE
@@ -258,13 +240,19 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %changelog
 * Sun Nov  24 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-3
 - Added patch for ion-statusd bug.
-- Removed URLs for patches, as per review.
-- Added missing libmainloop/rx.mk to -devel.
+- Removed URLs for patches.
+- Updated URLs for source1 and source2.
 - Switched to all references to package version to use variables.
-- Switched to find_lang from lang
+- Switched to find_lang from lang.
 - Switched to desktop-file-install and added desktop-file-validate.
 - Changed files section such that package owns whole directory instead of 
   just individual files.
+- Moved libextl, libmainloop, and libtu into their own packages to conform
+  to Fedora guidelines.
+- Switched all documentation references in files section to using doc macro.
+- Removed BuildRequires: lua
+- Added optflags to build.
+- Updated notion.desktop.
 
 * Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
 - Modified devel to place all files in /usr/include
