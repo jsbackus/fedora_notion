@@ -10,7 +10,7 @@ License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
 #Source1:        https://github.com/jsbackus/notion-doc/archive/%{name}-doc-3-2013030200.tar.gz
-Source1:	https://fedorahosted.org/released/%{name}/%{name}-doc-3-2013030200.tar.bz2
+Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-3-2013030200.tar.bz2
 Source2:        https://raw.github.com/jsbackus/fedora_notion/master/%{name}.desktop
 
 # Patch submitted to upstream via e-mail on 11/3/2013
@@ -207,7 +207,7 @@ done
 
 # Doc subpackage
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
-make install DOCDIR=%{_builddir}/_docs_staging TOPDIR=..
+make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files -f %{name}.lang
 %doc README LICENSE ChangeLog RELNOTES
