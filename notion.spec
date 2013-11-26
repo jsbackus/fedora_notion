@@ -80,7 +80,6 @@ Notion.
 %package -n libextl-devel
 Summary:        Small library for very easily extending programs with Lua
 License:        LGPLv2+
-BuildArch:      noarch
 
 %description -n libextl-devel
 Libextl supports exporting functions that operate on basic data types (int,
@@ -97,7 +96,6 @@ ways to call and load Lua code.
 
 %package -n libmainloop-devel
 Summary:        Support library for the Notion window manager
-BuildArch:      noarch
 
 %description -n libmainloop-devel
 This package contains a support library necessary for extending and 
@@ -105,7 +103,6 @@ customizing Notion.
 
 %package -n libtu-devel
 Summary:        Support library for the Notion window manager
-BuildArch:      noarch
 
 %description -n libtu-devel
 This package contains a support library necessary for extending and 
@@ -179,9 +176,9 @@ install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/libmainloop.a $RPM_BUI
 # libtu subpackage
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/libtu
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/libtu/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libtu.a $RPM_BUILD_ROOT%{_libdir}/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/libtu.a $RPM_BUILD_ROOT%{_libdir}/
 
-# Dev subpackage
+# notion-devel subpackage
 for i in de ioncore mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
   mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
