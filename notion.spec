@@ -22,6 +22,7 @@ Patch2:         %{name}-doc-%{majorver}.%{datever}.p02-css_newline.patch
 Patch3:         %{name}-%{majorver}.%{datever}.p03-ChangeLog_update.patch
 # Patch submitted to upstream via e-mail on 11/16/2013
 Patch4:         %{name}-%{majorver}.%{datever}.p04-fonts.patch
+# Patch submitted to upstream via e-mail on 11/26/2013
 Patch5:         %{name}-%{majorver}.%{datever}.p05-fix_orphaned_statusd.patch
 
 BuildRequires:  gettext
@@ -54,7 +55,6 @@ Features include:
 Summary:        3rd party scripts for the Notion window manager
 License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LGPLv2+ and GPL+ and GPLv2 and BSD
 BuildArch:      noarch
-
 Requires:       terminus-fonts
 
 %description contrib
