@@ -77,39 +77,46 @@ BuildArch:      noarch
 This package contains the documentation for extending and customizing 
 Notion.
 
-%package -n libextl
-Summary:        TODO
+%package -n libextl-devel
+Summary:        Small library for very easily extending programs with Lua
+License:        LGPLv2+
 BuildArch:      noarch
 
-%description -n libextl
-TODO
-This package contains the development files necessary for extending and 
+%description -n libextl-devel
+Libextl supports exporting functions that operate on basic data types (int,
+bool, double, [const] char*) and references to Lua tables and functions
+(ExtlTab, ExtlFn) simply by prefixing the function definition with the
+keywords EXTL_EXPORT, EXTL_EXPORT_AS or EXTL_EXPORT_MEMBER. More complex
+data must, however, either be proxied libtu objects (or objects of some
+other object system with the appropriate macros redefined), or Lua tables.
+The binding glue is, however, generated as painlessly as for functions that
+operate on basic data types with all pointers to a type with a name that
+begins with an uppercase letter considered as such objects. Libextl also
+provides functions to manipulate Lua tables through references to these, and
+ways to call and load Lua code.
+
+%package -n libmainloop-devel
+Summary:        Support library for the Notion window manager
+BuildArch:      noarch
+
+%description -n libmainloop-devel
+This package contains a support library necessary for extending and 
 customizing Notion.
 
-%package -n libmainloop
-Summary:        TODO
+%package -n libtu-devel
+Summary:        Support library for the Notion window manager
 BuildArch:      noarch
 
-%description -n libmainloop
-TODO
-This package contains the development files necessary for extending and 
-customizing Notion.
-
-%package -n libtu
-Summary:        TODO
-BuildArch:      noarch
-
-%description -n libtu
-TODO
-This package contains the development files necessary for extending and 
+%description -n libtu-devel
+This package contains a support library necessary for extending and 
 customizing Notion.
 
 %package devel
 Summary:        Development files for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       libextl = %{version}-%{release}
-Requires:       libmainloop = %{version}-%{release}
-Requires:       libtu = %{version}-%{release}
+Requires:       libextl-devel = %{version}-%{release}
+Requires:       libmainloop-devel = %{version}-%{release}
+Requires:       libtu-devel = %{version}-%{release}
 
 %description devel
 This package contains the development files necessary for extending and 
@@ -161,15 +168,18 @@ desktop-file-validate %{buildroot}/%{_datadir}/xsessions/%{name}.desktop
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/libextl
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/*.h $RPM_BUILD_ROOT%{_includedir}/libextl/
 install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/libextl/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl.a $RPM_BUILD_ROOT%{_libdir}/
 
 # libmainloop subpackage
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/libmainloop
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/*.h $RPM_BUILD_ROOT%{_includedir}/libmainloop/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/libmainloop/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/libmainloop/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/libmainloop.a $RPM_BUILD_ROOT%{_libdir}/
 
 # libtu subpackage
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/libtu
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/libtu/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libtu.a $RPM_BUILD_ROOT%{_libdir}/
 
 # Dev subpackage
 for i in de ioncore mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
@@ -212,8 +222,9 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_bindir}/*
 %{_libdir}/%{name}
 %{_mandir}/man1/*
+%lang(fi) %{_datadir}/%{name}/welcome.fi.txt
+%lang(cs) %{_datadir}/%{name}/welcome.cs.txt
 %{_datadir}/%{name}
-
 %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
@@ -223,17 +234,20 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %files doc
 %doc _docs_staging/*
 
-%files -n libextl
-%doc README LICENSE
+%files -n libextl-devel
+%doc libextl/README libextl/LICENSE
 %{_includedir}/libextl
+%{_libdir}/libextl.a
 
-%files -n libmainloop
+%files -n libmainloop-devel
 %doc README LICENSE
 %{_includedir}/libmainloop
+%{_libdir}/libmainloop.a
 
-%files -n libtu
+%files -n libtu-devel
 %doc README LICENSE
 %{_includedir}/libtu
+%{_libdir}/libtu.a
 
 %files devel
 %doc README LICENSE
