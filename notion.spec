@@ -13,24 +13,11 @@ Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorv
 Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.gz
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
-# Patch submitted to upstream via e-mail on 11/3/2013
-#Patch0:         %{name}-%{majorver}.%{datever}.p00-man-utf8.patch
-# Patch submitted to upstream via e-mail on 11/3/2013
-#Patch1:         %{name}-%{majorver}.%{datever}.p01-fsf_addr.patch
-# Patch submitted to upstream via e-mail on 11/3/2013
-#Patch2:         %{name}-doc-%{majorver}.%{datever}.p02-css_newline.patch
-# Patch submitted to upstream via e-mail on 11/3/2013
-#Patch3:         %{name}-%{majorver}.%{datever}.p03-ChangeLog_update.patch
-# Patch submitted to upstream via e-mail on 11/16/2013
-#Patch4:         %{name}-%{majorver}.%{datever}.p04-fonts.patch
-# Patch submitted to upstream via e-mail on 11/26/2013
-#Patch5:         %{name}-%{majorver}.%{datever}.p05-fix_orphaned_statusd.patch
-
 Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
 Patch1:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
 Patch2:         %{name}-%{majorver}.%{datever}.p02-fsf_addr.patch
 Patch3:         %{name}-%{majorver}.%{datever}.p03-x11_prefix.patch
-
+Patch4:         %{name}-%{majorver}.%{datever}.p04-man_utf8.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -127,7 +114,6 @@ This package contains the development files necessary for extending and
 customizing Notion.
 
 %prep
-#%setup -q -n %{name}-%{majorver}-%{datever}
 %setup -q -n %{name}
 
 # Decompress doc pkg
@@ -137,18 +123,13 @@ tar -xvf %SOURCE1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-#%patch4 -p1
-#%patch5 -p1
+%patch4 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
     -e 's|^\(LIBDIR=\).*$|\1%{_libdir}|' \
     -e 's|\(CFLAGS *+*= *\)\(-Os\)|\1 $(RPM_OPT_FLAGS) \2|' \
     -i system-autodetect.mk
-
-#    -e 's|^\(X11_PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
-#    -e 's|^\(X11_LIBS=\).*$|\1`pkg-config --libs x11 xext`|' \
-#    -e 's|^\(LUA_DIR=\).*$|\1%{_prefix}|' \
 
 # Installing docs to a temporary directory so that we can pick them up with 
 # doc macro later.
@@ -158,7 +139,7 @@ mkdir _docs_staging
 make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
 # Note: -doc won't build w/ ?_smp_mflags.
-cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
+cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
 make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=.. all
 
 %install
@@ -213,14 +194,14 @@ for i in libextl libmainloop libtu; do
 done
 
 # contrib subpackage
-for i in keybindings scripts scripts/legacy statusbar statusd styles; do
+for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd statusd/legacy styles; do
   mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/*.lua $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
 done
 
 
 # Doc subpackage
-cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc
+cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
 make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files -f %{name}.lang
@@ -231,7 +212,11 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_mandir}/man1/*
 %lang(fi) %{_datadir}/%{name}/welcome.fi.txt
 %lang(cs) %{_datadir}/%{name}/welcome.cs.txt
-%{_datadir}/%{name}
+%{_datadir}/%{name}/ion-completeman
+%{_datadir}/%{name}/ion-runinxterm
+%{_datadir}/%{name}/notion-lock
+%{_datadir}/%{name}/welcome.txt
+%dir %{_datadir}/%{name}
 %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
@@ -261,8 +246,9 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_includedir}/%{name}
 
 %changelog
-* Sat Jan  4 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010402-3
-- New release
+* Sat Jan  4 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010402-1
+- New upstream release.
+- Fixed issue where contrib files where getting picked up by main package.
 
 * Sun Nov  24 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-3
 - Added patch for ion-statusd bug.
