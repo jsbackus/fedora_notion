@@ -1,5 +1,5 @@
 %global majorver 3
-%global datever  2014010402
+%global datever  2014010505
 
 Name:           notion
 Version:        %{majorver}.%{datever}
@@ -9,12 +9,12 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        LGPLv2 with exceptions
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
-# Source https://github.com/jsbackus/notion-doc/archive/3-2014010402.tar.gz
+# Source https://github.com/jsbackus/notion-doc/archive/3-2014010505.tar.gz
 Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.gz
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
 Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
-Patch1:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
+#Patch1:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
 Patch2:         %{name}-%{majorver}.%{datever}.p02-fsf_addr.patch
 Patch3:         %{name}-%{majorver}.%{datever}.p03-x11_prefix.patch
 Patch4:         %{name}-%{majorver}.%{datever}.p04-man_utf8.patch
@@ -35,6 +35,7 @@ BuildRequires:  texlive-collection-latexextra
 
 Requires:       xterm
 Requires:       xorg-x11-utils
+Requires:	xorg-x11-fonts-ISO8559-1-75dpi
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
@@ -114,16 +115,26 @@ This package contains the development files necessary for extending and
 customizing Notion.
 
 %prep
+rm -rf $RPM_BUILD_DIR
+mkdir -p $RPM_BUILD_DIR
 %setup -q -n %{name}
+
+# Hack
+mkdir -p $RPM_BUILD_DIR/.pfft
+mv $RPM_BUILD_DIR/* $RPM_BUILD_DIR/.pfft
+mv $RPM_BUILD_DIR/.pfft $RPM_BUILD_DIR/%{name}
+cd $RPM_BUILD_DIR/%{name}
+rm $RPM_BUILD_DIR/.gitignore $RPM_BUILD_DIR/.travis.yml
 
 # Decompress doc pkg
 tar -xvf %SOURCE1
 
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
+#%patch4 -p1
+sed -e 's|^\(NROFF=nroff -man\).*$|\1 -Tutf8|' -i man/Makefile
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
@@ -133,7 +144,7 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
 
 # Installing docs to a temporary directory so that we can pick them up with 
 # doc macro later.
-mkdir _docs_staging
+mkdir $RPM_BUILD_DIR/%{name}/_docs_staging
 
 %build
 make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
@@ -246,7 +257,7 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_includedir}/%{name}
 
 %changelog
-* Sat Jan  4 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010402-1
+* Sat Jan  4 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010505-1
 - New upstream release.
 - Fixed issue where contrib files where getting picked up by main package.
 
