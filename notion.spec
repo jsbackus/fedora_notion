@@ -1,5 +1,5 @@
 %global majorver 3
-%global datever  2014010505
+%global datever  2014010900
 
 Name:           notion
 Version:        %{majorver}.%{datever}
@@ -14,10 +14,9 @@ Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
 Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
-#Patch1:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
-Patch2:         %{name}-%{majorver}.%{datever}.p02-fsf_addr.patch
-Patch3:         %{name}-%{majorver}.%{datever}.p03-x11_prefix.patch
-Patch4:         %{name}-%{majorver}.%{datever}.p04-man_utf8.patch
+Patch1:         %{name}-%{majorver}.%{datever}.p03-x11_prefix.patch
+Patch2:         %{name}-%{majorver}.%{datever}.p04-man_utf8.patch
+#Patch3:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -115,26 +114,15 @@ This package contains the development files necessary for extending and
 customizing Notion.
 
 %prep
-rm -rf $RPM_BUILD_DIR
-mkdir -p $RPM_BUILD_DIR
-%setup -q -n %{name}
-
-# Hack
-mkdir -p $RPM_BUILD_DIR/.pfft
-mv $RPM_BUILD_DIR/* $RPM_BUILD_DIR/.pfft
-mv $RPM_BUILD_DIR/.pfft $RPM_BUILD_DIR/%{name}
-cd $RPM_BUILD_DIR/%{name}
-rm $RPM_BUILD_DIR/.gitignore $RPM_BUILD_DIR/.travis.yml
+%setup -q -n %{name}-%{majorver}-%{datever}
 
 # Decompress doc pkg
 tar -xvf %SOURCE1
 
 %patch0 -p1
-#%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-#%patch4 -p1
-sed -e 's|^\(NROFF=nroff -man\).*$|\1 -Tutf8|' -i man/Makefile
+%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
@@ -142,11 +130,11 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|\(CFLAGS *+*= *\)\(-Os\)|\1 $(RPM_OPT_FLAGS) \2|' \
     -i system-autodetect.mk
 
+%build
 # Installing docs to a temporary directory so that we can pick them up with 
 # doc macro later.
-mkdir $RPM_BUILD_DIR/%{name}/_docs_staging
+mkdir $RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
-%build
 make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
 # Note: -doc won't build w/ ?_smp_mflags.
