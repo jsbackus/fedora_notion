@@ -14,8 +14,8 @@ Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
 Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
-Patch1:         %{name}-%{majorver}.%{datever}.p03-x11_prefix.patch
-Patch2:         %{name}-%{majorver}.%{datever}.p04-man_utf8.patch
+Patch1:         %{name}-%{majorver}.%{datever}.p01-man_utf8.patch
+Patch2:         %{name}-%{majorver}.%{datever}.p02-x11_prefix.patch
 #Patch3:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
 
 BuildRequires:  gettext
@@ -121,7 +121,7 @@ tar -xvf %SOURCE1
 
 %patch0 -p1
 %patch1 -p1
-#%patch2 -p1
+%patch2 -p1
 #%patch3 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
@@ -245,7 +245,7 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_includedir}/%{name}
 
 %changelog
-* Sat Jan  4 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010505-1
+* Sat Jan  12 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-1
 - New upstream release.
 - Fixed issue where contrib files where getting picked up by main package.
 
