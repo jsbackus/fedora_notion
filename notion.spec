@@ -34,7 +34,7 @@ BuildRequires:  texlive-collection-latexextra
 
 Requires:       xterm
 Requires:       xorg-x11-utils
-Requires:	xorg-x11-fonts-ISO8559-1-75dpi
+Requires:       xorg-x11-fonts-ISO8559-1-75dpi
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
@@ -211,11 +211,11 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_mandir}/man1/*
 %lang(fi) %{_datadir}/%{name}/welcome.fi.txt
 %lang(cs) %{_datadir}/%{name}/welcome.cs.txt
+%dir %{_datadir}/%{name}
 %{_datadir}/%{name}/ion-completeman
 %{_datadir}/%{name}/ion-runinxterm
 %{_datadir}/%{name}/notion-lock
 %{_datadir}/%{name}/welcome.txt
-%dir %{_datadir}/%{name}
 %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
