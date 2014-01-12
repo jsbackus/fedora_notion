@@ -1,11 +1,11 @@
-diff -rupN notion-3-2013030200/man/Makefile notion-3-2013030200_patched/man/Makefile
---- notion-3-2013030200/man/Makefile	2013-03-02 16:02:30.000000000 -0500
-+++ notion-3-2013030200_patched/man/Makefile	2013-11-02 17:36:28.261608243 -0400
-@@ -19,6 +19,7 @@ TARGETS=notion.1 $(foreach tr, $(TRANSLA
+diff -rupN notion-3-2014010900/man/Makefile notion-3-2014010900_patched/man/Makefile
+--- notion-3-2014010900/man/Makefile	2014-01-09 14:02:16.000000000 -0500
++++ notion-3-2014010900_patched/man/Makefile	2014-01-11 13:22:42.301524339 -0500
+@@ -19,6 +19,7 @@ TARGETS=notion.1 notionflux.1 $(foreach
  
  MKMAN=$(LUA) ../build/mkman.lua $(MKMAN_DEFS)
  MKMAN_DEFS=-D ETCDIR $(REL)$(ETCDIR) -D DOCDIR $(REL)$(DOCDIR)
-+ICONV=`which iconv`
+++ICONV=`which iconv`
  
  ifeq ($(RELOCATABLE),1)
  REL="/..."
@@ -13,7 +13,7 @@ diff -rupN notion-3-2013030200/man/Makefile notion-3-2013030200_patched/man/Make
  
  notion.%.1: notion.%.in $(CONFIGS) ../po/%.po
  	$(MKMAN) -po ../po/$*.po -i $< -o $@ $(CONFIGS)
-+	$(ICONV) -f LATIN1 -t UTF8 -o $@ $@
+++	$(ICONV) -f LATIN1 -t UTF8 -o $@ $@
  
- welcome%txt: welcome%head notion%1
- 	(cat welcome$*head; \
+ notionflux.1: notionflux.in $(CONFIGS)
+ 	$(MKMAN) -i $< -o $@ $(CONFIGS)
