@@ -71,11 +71,11 @@ BuildArch:      noarch
 This package contains the documentation for extending and customizing 
 Notion.
 
-%package -n libextl-devel
+%package -n libextl-devel-static
 Summary:        Small library for very easily extending programs with Lua
 License:        LGPLv2+
 
-%description -n libextl-devel
+%description -n libextl-devel-static
 Libextl supports exporting functions that operate on basic data types (int,
 bool, double, [const] char*) and references to Lua tables and functions
 (ExtlTab, ExtlFn) simply by prefixing the function definition with the
@@ -88,26 +88,26 @@ begins with an uppercase letter considered as such objects. Libextl also
 provides functions to manipulate Lua tables through references to these, and
 ways to call and load Lua code.
 
-%package -n libmainloop-devel
+%package -n libmainloop-devel-static
 Summary:        Support library for the Notion window manager
 
-%description -n libmainloop-devel
+%description -n libmainloop-devel-static
 This package contains a support library necessary for extending and 
 customizing Notion.
 
-%package -n libtu-devel
+%package -n libtu-devel-static
 Summary:        Support library for the Notion window manager
 
-%description -n libtu-devel
+%description -n libtu-devel-static
 This package contains a support library necessary for extending and 
 customizing Notion.
 
 %package devel
 Summary:        Development files for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       libextl-devel = %{version}-%{release}
-Requires:       libmainloop-devel = %{version}-%{release}
-Requires:       libtu-devel = %{version}-%{release}
+Requires:       libextl-devel-static = %{version}-%{release}
+Requires:       libmainloop-devel-static = %{version}-%{release}
+Requires:       libtu-devel-static = %{version}-%{release}
 
 %description devel
 This package contains the development files necessary for extending and 
@@ -147,8 +147,8 @@ make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 %find_lang %{name} --with-man
 
 # Install and verify desktop file
-desktop-file-install --dir=%{buildroot}/%{_datadir}/xsessions %{SOURCE2}
-desktop-file-validate %{buildroot}/%{_datadir}/xsessions/%{name}.desktop
+desktop-file-install --dir=$RPM_BUILD_ROOT/%{_datadir}/xsessions %{SOURCE2}
+desktop-file-validate $RPM_BUILD_ROOT/%{_datadir}/xsessions/%{name}.desktop
 
 # libextl subpackage
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/libextl
@@ -225,17 +225,17 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %files doc
 %doc _docs_staging/*
 
-%files -n libextl-devel
+%files -n libextl-devel-static
 %doc libextl/README libextl/LICENSE
 %{_includedir}/libextl
 %{_libdir}/libextl.a
 
-%files -n libmainloop-devel
+%files -n libmainloop-devel-static
 %doc README LICENSE
 %{_includedir}/libmainloop
 %{_libdir}/libmainloop.a
 
-%files -n libtu-devel
+%files -n libtu-devel-static
 %doc README LICENSE
 %{_includedir}/libtu
 %{_libdir}/libtu.a
@@ -245,7 +245,10 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_includedir}/%{name}
 
 %changelog
-* Sat Jan  12 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-1
+* Sun Jan  12 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
+- Addressing issues with review.
+
+* Sat Jan  11 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-1
 - New upstream release.
 - Fixed issue where contrib files where getting picked up by main package.
 
