@@ -3,7 +3,7 @@
 
 Name:           notion
 Version:        %{majorver}.%{datever}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Tabbed, tiling window manager forked from Ion3
 
 License:        LGPLv2 with exceptions
@@ -34,7 +34,7 @@ BuildRequires:  texlive-collection-latexextra
 
 Requires:       xterm
 Requires:       xorg-x11-utils
-Requires:       xorg-x11-fonts-ISO8559-1-75dpi
+Requires:       xorg-x11-fonts-ISO8859-1-75dpi
 
 %description
 Notion is a tabbed, tiling window manager for the X windows system.
@@ -245,6 +245,9 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %{_includedir}/%{name}
 
 %changelog
+* Sat Jan  18 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
+- Fixed a typo in required font package name.
+
 * Sat Jan  12 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-1
 - New upstream release.
 - Fixed issue where contrib files where getting picked up by main package.
