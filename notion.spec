@@ -3,7 +3,7 @@
 
 Name:           notion
 Version:        %{majorver}.%{datever}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Tabbed, tiling window manager forked from Ion3
 
 License:        LGPLv2 with exceptions
@@ -16,7 +16,6 @@ Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
 Patch1:         %{name}-%{majorver}.%{datever}.p01-man_utf8.patch
 Patch2:         %{name}-%{majorver}.%{datever}.p02-x11_prefix.patch
-#Patch3:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -120,9 +119,8 @@ customizing Notion.
 tar -xvf %SOURCE1
 
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 %patch2 -p1
-#%patch3 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
@@ -136,6 +134,18 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
 mkdir $RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
 make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
+
+# *** BEGIN DEBUG
+# Should be able to make these conversions in the repository.
+# May need to modify the po Makefile to ensure proper encoding...
+mkdir $RPM_BUILD_DIR/%{buildsubdir}/_tmp_utf8
+for i in etc/cfg_notioncore.lua etc/cfg_tiling.lua etc/cfg_query.lua etc/cfg_menu.lua po/cs.po po/de.po po/fi.po po/fr.po man/notion.cs.in man/notion.fi.in; do
+    install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_DIR/%{buildsubdir}/_tmp_utf8/$i
+    iconv -f LATIN1 -t UTF8 -o $RPM_BUILD_DIR/%{buildsubdir}/$i $RPM_BUILD_DIR/%{buildsubdir}/_tmp_utf8/$i
+done
+cd $RPM_BUILD_DIR/%{buildsubdir}/man
+make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
+# *** END DEBUG
 
 # Note: -doc won't build w/ ?_smp_mflags.
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
