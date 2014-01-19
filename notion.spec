@@ -13,7 +13,7 @@ Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorv
 Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.gz
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
-Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
+#Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
 Patch1:         %{name}-%{majorver}.%{datever}.p01-man_utf8.patch
 Patch2:         %{name}-%{majorver}.%{datever}.p02-x11_prefix.patch
 
@@ -49,6 +49,7 @@ Summary:        3rd party scripts for the Notion window manager
 License:        GPLv3 and Public Domain and GPLv2+ and Artistic clarified and LGPLv2+ and GPL+ and GPLv2 and BSD
 BuildArch:      noarch
 Requires:       terminus-fonts
+Requires:       %{name} = %{version}-%{release}
 
 %description contrib
 This package contains a number of scripts from third parties for Notion, 
@@ -65,48 +66,15 @@ copy/link the script(s) you want into ~/.notion and restart Notion.
 Summary:        Documentation for the Notion window manager
 License:        GFDL
 BuildArch:      noarch
+Requires:       %{name} = %{version}-%{release}
 
 %description doc
 This package contains the documentation for extending and customizing 
 Notion.
 
-#%package -n libextl-devel
-#Summary:        Small library for very easily extending programs with Lua
-#License:        LGPLv2+
-
-#%description -n libextl-devel
-#Libextl supports exporting functions that operate on basic data types (int,
-#bool, double, [const] char*) and references to Lua tables and functions
-#(ExtlTab, ExtlFn) simply by prefixing the function definition with the
-#keywords EXTL_EXPORT, EXTL_EXPORT_AS or EXTL_EXPORT_MEMBER. More complex
-#data must, however, either be proxied libtu objects (or objects of some
-#other object system with the appropriate macros redefined), or Lua tables.
-#The binding glue is, however, generated as painlessly as for functions that
-#operate on basic data types with all pointers to a type with a name that
-#begins with an uppercase letter considered as such objects. Libextl also
-#provides functions to manipulate Lua tables through references to these, and
-#ways to call and load Lua code.
-
-#%package -n libmainloop-devel
-#Summary:        Support library for the Notion window manager
-
-#%description -n libmainloop-devel
-#This package contains a support library necessary for extending and 
-#customizing Notion.
-
-#%package -n libtu-devel
-#Summary:        Support library for the Notion window manager
-
-#%description -n libtu-devel
-#This package contains a support library necessary for extending and 
-#customizing Notion.
-
 %package devel
 Summary:        Development files for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-#Requires:       libextl-devel = %{version}-%{release}
-#Requires:       libmainloop-devel = %{version}-%{release}
-#Requires:       libtu-devel = %{version}-%{release}
 
 %description devel
 This package contains the development files necessary for extending and 
@@ -118,7 +86,7 @@ customizing Notion.
 # Decompress doc pkg
 tar -xvf %SOURCE1
 
-%patch0 -p1
+#%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
@@ -133,10 +101,11 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
 # doc macro later.
 mkdir $RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
-#make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
-make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
+make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
+#make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
-# Note: -doc won't build w/ ?_smp_mflags.
+# Note: -doc won't build w/ ?_smp_mflags. Shouldn't be a problem as there are
+# no executables.
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
 make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=.. all
 
@@ -149,22 +118,19 @@ make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 desktop-file-install --dir=$RPM_BUILD_ROOT/%{_datadir}/xsessions %{SOURCE2}
 desktop-file-validate $RPM_BUILD_ROOT/%{_datadir}/xsessions/%{name}.desktop
 
-# libextl subpackage
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/libextl
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/*.h $RPM_BUILD_ROOT%{_includedir}/libextl/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/libextl/
-#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl.a $RPM_BUILD_ROOT%{_libdir}/
+# libextl header files
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl/
+install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl/
 
-# libmainloop subpackage
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/libmainloop
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/*.h $RPM_BUILD_ROOT%{_includedir}/libmainloop/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/libmainloop/
-#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/libmainloop.a $RPM_BUILD_ROOT%{_libdir}/
+# libmainloop header files
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop/
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop/
 
-# libtu subpackage
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/libtu
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/libtu/
-#install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/libtu.a $RPM_BUILD_ROOT%{_libdir}/
+# libtu header files
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libtu
+install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libtu/
 
 # notion-devel subpackage
 for i in de ioncore mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
@@ -185,12 +151,6 @@ for i in rules.mk system-inc.mk; do
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/%{name}/build/
 done
 
-# Most parts of Notion actually expect these "libraries" to be in the 
-# notion TOPDIR, so we'll create links to keep them happy.
-#for i in libextl libmainloop libtu; do
-#  ln -s "../$i" $RPM_BUILD_ROOT%{_includedir}/%{name}/$i
-#done
-
 # contrib subpackage
 for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd statusd/legacy styles; do
   mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
@@ -202,14 +162,14 @@ cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
 make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files -f %{name}.lang
-%doc README LICENSE ChangeLog RELNOTES
+%doc README LICENSE RELNOTES
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
 %{_mandir}/man1/*
+%dir %{_datadir}/%{name}
 %lang(fi) %{_datadir}/%{name}/welcome.fi.txt
 %lang(cs) %{_datadir}/%{name}/welcome.cs.txt
-%dir %{_datadir}/%{name}
 %{_datadir}/%{name}/ion-completeman
 %{_datadir}/%{name}/ion-runinxterm
 %{_datadir}/%{name}/notion-lock
@@ -222,21 +182,6 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files doc
 %doc _docs_staging/*
-
-#%files -n libextl-devel
-#%doc libextl/README libextl/LICENSE
-#%{_includedir}/libextl
-#%{_libdir}/libextl.a
-
-#%files -n libmainloop-devel
-#%doc README LICENSE
-#%{_includedir}/libmainloop
-#%{_libdir}/libmainloop.a
-
-#%files -n libtu-devel
-#%doc README LICENSE
-#%{_includedir}/libtu
-#%{_libdir}/libtu.a
 
 %files devel
 %doc README LICENSE
