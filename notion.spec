@@ -16,7 +16,6 @@ Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
 Patch1:         %{name}-%{majorver}.%{datever}.p01-man_utf8.patch
 Patch2:         %{name}-%{majorver}.%{datever}.p02-x11_prefix.patch
-#Patch3:         %{name}-%{majorver}.%{datever}.p01-fonts.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -71,11 +70,11 @@ BuildArch:      noarch
 This package contains the documentation for extending and customizing 
 Notion.
 
-%package -n libextl-devel-static
+%package -n libextl-devel
 Summary:        Small library for very easily extending programs with Lua
 License:        LGPLv2+
 
-%description -n libextl-devel-static
+%description -n libextl-devel
 Libextl supports exporting functions that operate on basic data types (int,
 bool, double, [const] char*) and references to Lua tables and functions
 (ExtlTab, ExtlFn) simply by prefixing the function definition with the
@@ -88,26 +87,26 @@ begins with an uppercase letter considered as such objects. Libextl also
 provides functions to manipulate Lua tables through references to these, and
 ways to call and load Lua code.
 
-%package -n libmainloop-devel-static
+%package -n libmainloop-devel
 Summary:        Support library for the Notion window manager
 
-%description -n libmainloop-devel-static
+%description -n libmainloop-devel
 This package contains a support library necessary for extending and 
 customizing Notion.
 
-%package -n libtu-devel-static
+%package -n libtu-devel
 Summary:        Support library for the Notion window manager
 
-%description -n libtu-devel-static
+%description -n libtu-devel
 This package contains a support library necessary for extending and 
 customizing Notion.
 
 %package devel
 Summary:        Development files for the Notion window manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       libextl-devel-static = %{version}-%{release}
-Requires:       libmainloop-devel-static = %{version}-%{release}
-Requires:       libtu-devel-static = %{version}-%{release}
+Requires:       libextl-devel = %{version}-%{release}
+Requires:       libmainloop-devel = %{version}-%{release}
+Requires:       libtu-devel = %{version}-%{release}
 
 %description devel
 This package contains the development files necessary for extending and 
@@ -122,7 +121,6 @@ tar -xvf %SOURCE1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-#%patch3 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
@@ -225,17 +223,17 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %files doc
 %doc _docs_staging/*
 
-%files -n libextl-devel-static
+%files -n libextl-devel
 %doc libextl/README libextl/LICENSE
 %{_includedir}/libextl
 %{_libdir}/libextl.a
 
-%files -n libmainloop-devel-static
+%files -n libmainloop-devel
 %doc README LICENSE
 %{_includedir}/libmainloop
 %{_libdir}/libmainloop.a
 
-%files -n libtu-devel-static
+%files -n libtu-devel
 %doc README LICENSE
 %{_includedir}/libtu
 %{_libdir}/libtu.a
@@ -246,7 +244,8 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %changelog
 * Sun Jan  19 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
-- Addressing issues with review.
+- Changed method of correcting manpage text encoding to something upstream can
+  apply to source.
 
 * Sat Jan  18 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
 - Fixed a typo in required font package name.
