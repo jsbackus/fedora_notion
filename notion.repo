@@ -1,10 +1,8 @@
-# To set up:
-# 1. copy all RPMS into /tmp/notion_repo and type:
-#   createrepo /tmp/notion_repo
-# 2. Place this file in /etc/yum.repos.d
+# Place this file in your /etc/yum.repos.d/ directory
 
 [notion]
-Name=Local Notion Debug Repository
-baseurl=file:///tmp/notion_repo
+name=Notion RPM packages for Fedora
+baseurl=http://jsbackus.fedorapeople.org/notion/RPMS/fedora-$releasever/
 enabled=1
+skip_if_unavailable=1
 gpgcheck=0
