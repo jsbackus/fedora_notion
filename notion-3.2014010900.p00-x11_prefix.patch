@@ -1,7 +1,7 @@
 From f7d05f65a1602d7da52495de0934d0d04494ea14 Mon Sep 17 00:00:00 2001
 From: Jeff Backus <jeff.backus@gmail.com>
 Date: Sun, 5 Jan 2014 13:19:29 -0500
-Subject: [PATCH] * Modified X11_LIBS and X11_INCLUDES statements to use
+Subject: [PATCH 1/2] * Modified X11_LIBS and X11_INCLUDES statements to use
  pkg-config.
 
 ---
@@ -27,6 +27,46 @@ index d61c447..69b21d0 100644
 +#X11_INCLUDES=-I$(X11_PREFIX)/include
 +X11_LIBS := $(or $(shell pkg-config --libs x11 xext), $(error "pkg-config couldn't find X11 libraries"))
 +X11_INCLUDES := $(shell pkg-config --cflags x11 xext)
+ 
+ # XFree86 libraries up to 4.3.0 have a bug that can cause a segfault.
+ # The following setting  should  work around that situation.
+-- 
+1.8.1.4
+
+
+From c18c8f9865f26b21edcdc99986abc33df526bcf7 Mon Sep 17 00:00:00 2001
+From: Jeff Backus <jeff.backus@gmail.com>
+Date: Mon, 20 Jan 2014 12:10:18 -0500
+Subject: [PATCH 2/2] * Reverted back to non-pkg-config method. * Added two new
+ variables, X11_LIBDIR and X11_INCDIR that allow the user more fine-grained
+ control over X11 lib and inc paths.
+
+---
+ system-autodetect.mk | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/system-autodetect.mk b/system-autodetect.mk
+index 69b21d0..cb8c65f 100644
+--- a/system-autodetect.mk
++++ b/system-autodetect.mk
+@@ -77,14 +77,15 @@ include $(TOPDIR)/build/lua-detect.mk
+ ##
+ 
+ # Paths
+-#X11_PREFIX ?= /usr/X11R6
++X11_PREFIX ?= /usr/X11R6
+ # SunOS/Solaris
+ #X11_PREFIX ?= /usr/openwin
+ 
+-#X11_LIBS=-L$(X11_PREFIX)/lib -lX11 -lXext
+-#X11_INCLUDES=-I$(X11_PREFIX)/include
+-X11_LIBS := $(or $(shell pkg-config --libs x11 xext), $(error "pkg-config couldn't find X11 libraries"))
+-X11_INCLUDES := $(shell pkg-config --cflags x11 xext)
++X11_LIBDIR ?= $(X11_PREFIX)/lib
++X11_INCDIR ?= $(X11_PREFIX)/include
++
++X11_LIBS=-L$(X11_LIBDIR) -lX11 -lXext
++X11_INCLUDES=-I$(X11_INCDIR)
  
  # XFree86 libraries up to 4.3.0 have a bug that can cause a segfault.
  # The following setting  should  work around that situation.
