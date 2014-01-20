@@ -96,18 +96,22 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|\(CFLAGS *+*= *\)\(-Os\)|\1 $(RPM_OPT_FLAGS) \2|' \
     -i system-autodetect.mk
 
+
+
 %build
 # Installing docs to a temporary directory so that we can pick them up with 
 # doc macro later.
 mkdir $RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
 make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
-#make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
 # Note: -doc won't build w/ ?_smp_mflags. Shouldn't be a problem as there are
 # no executables.
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
 make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=.. all
+
+%check
+make test
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
@@ -118,6 +122,7 @@ make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 desktop-file-install --dir=$RPM_BUILD_ROOT/%{_datadir}/xsessions %{SOURCE2}
 desktop-file-validate $RPM_BUILD_ROOT/%{_datadir}/xsessions/%{name}.desktop
 
+# notion-devel subpackage
 # libextl header files
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl/
@@ -132,7 +137,6 @@ install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libtu
 install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libtu/
 
-# notion-devel subpackage
 for i in de ioncore mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
   mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
   install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
@@ -162,7 +166,7 @@ cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
 make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files -f %{name}.lang
-%doc README LICENSE RELNOTES
+%doc README ChangeLog LICENSE RELNOTES
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
@@ -186,23 +190,23 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %files devel
 %doc README LICENSE
 %{_includedir}/%{name}
-%{_includedir}/libextl
-%{_includedir}/libmainloop
-%{_includedir}/libtu
+#%{_includedir}/%{name}/libextl
+#%{_includedir}/%{name}/libmainloop
+#%{_includedir}/%{name}/libtu
 
 %changelog
-* Sun Jan  19 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
+* Sun Jan 19 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
 - Changed method of correcting manpage text encoding to something upstream can
   apply to source.
 
-* Sat Jan  18 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
+* Sat Jan 18 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
 - Fixed a typo in required font package name.
 
-* Sun Jan  12 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-1
+* Sun Jan 12 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-1
 - New upstream release.
 - Fixed issue where contrib files where getting picked up by main package.
 
-* Sun Nov  24 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-3
+* Sun Nov 24 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-3
 - Added patch for ion-statusd bug.
 - Removed URLs for patches.
 - Updated URLs for source1 and source2.
@@ -218,10 +222,10 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 - Added optflags to build.
 - Updated notion.desktop.
 
-* Wed Nov  13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
+* Wed Nov 13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
 - Modified devel to place all files in /usr/include
 - Added sed statment to alter X11_LIBS= in system-autodetect.mk to use pkgconfig.
 - Patched fonts in styles scripts to use valid 100dpi fonts.
 
-* Fri Nov  1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
+* Fri Nov 1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
 - Initial addition to Fedora.
