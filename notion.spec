@@ -13,9 +13,8 @@ Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorv
 Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.gz
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
-Patch0:         %{name}-%{majorver}.%{datever}.p00-x11_prefix.patch
 # Patch submitted to upstream
-Patch1:         %{name}-%{majorver}.%{datever}.p01-man_utf8.patch
+Patch0:         %{name}-%{majorver}.%{datever}.p00-man_utf8.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -78,8 +77,7 @@ Notion.
 # Decompress doc pkg
 tar -xvf %SOURCE1
 
-#%patch0 -p1
-%patch1 -p1
+%patch0 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
@@ -92,7 +90,7 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
 # doc macro later.
 mkdir $RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 
-make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
+make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging 
 
 # Note: -doc won't build w/ ?_smp_mflags. Shouldn't be a problem as there are
 # no executables.
@@ -144,6 +142,8 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 * Sun Jan 19 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
 - Changed method of correcting manpage text encoding to something upstream can
   apply to source.
+- Removed devel subpackage.
+- Removed unnecessary patches.
 
 * Sat Jan 18 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
 - Fixed a typo in required font package name.
