@@ -13,9 +13,9 @@ Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorv
 Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.gz
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
-#Patch0:         %{name}-%{majorver}.%{datever}.p00-ChangeLog_update.patch
+Patch0:         %{name}-%{majorver}.%{datever}.p00-x11_prefix.patch
+# Patch submitted to upstream
 Patch1:         %{name}-%{majorver}.%{datever}.p01-man_utf8.patch
-Patch2:         %{name}-%{majorver}.%{datever}.p02-x11_prefix.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -72,14 +72,6 @@ Requires:       %{name} = %{version}-%{release}
 This package contains the documentation for extending and customizing 
 Notion.
 
-%package devel
-Summary:        Development files for the Notion window manager
-Requires:       %{name}%{?_isa} = %{version}-%{release}
-
-%description devel
-This package contains the development files necessary for extending and 
-customizing Notion.
-
 %prep
 %setup -q -n %{name}-%{majorver}-%{datever}
 
@@ -88,15 +80,12 @@ tar -xvf %SOURCE1
 
 #%patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
     -e 's|^\(LIBDIR=\).*$|\1%{_libdir}|' \
     -e 's|\(CFLAGS *+*= *\)\(-Os\)|\1 $(RPM_OPT_FLAGS) \2|' \
     -i system-autodetect.mk
-
-
 
 %build
 # Installing docs to a temporary directory so that we can pick them up with 
@@ -110,9 +99,6 @@ make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
 cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
 make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=.. all
 
-%check
-make test
-
 %install
 make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 
@@ -121,39 +107,6 @@ make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 # Install and verify desktop file
 desktop-file-install --dir=$RPM_BUILD_ROOT/%{_datadir}/xsessions %{SOURCE2}
 desktop-file-validate $RPM_BUILD_ROOT/%{_datadir}/xsessions/%{name}.desktop
-
-# notion-devel subpackage
-# libextl header files
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libextl/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/libextl/libextl-mkexports $RPM_BUILD_ROOT%{_includedir}/%{name}/libextl/
-
-# libmainloop header files
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libmainloop/rx.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/libmainloop/
-
-# libtu header files
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/libtu
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/libtu/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/libtu/
-
-for i in de ioncore mod_dock mod_menu mod_query mod_sm mod_sp mod_statusbar mod_tiling mod_xinerama mod_xkbevents mod_xrandr utils/ion-statusd; do
-  mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/$i/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/$i/
-done
-
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/build
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/*.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/build/ 
-
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/system-autodetect.mk $RPM_BUILD_ROOT%{_includedir}/%{name}/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/version.h $RPM_BUILD_ROOT%{_includedir}/%{name}/
-install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/config.h $RPM_BUILD_ROOT%{_includedir}/%{name}/
-install -Dm0755 $RPM_BUILD_DIR/%{buildsubdir}/install-sh $RPM_BUILD_ROOT%{_includedir}/%{name}/
-
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/%{name}/build
-for i in rules.mk system-inc.mk; do
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/build/$i $RPM_BUILD_ROOT%{_includedir}/%{name}/build/
-done
 
 # contrib subpackage
 for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd statusd/legacy styles; do
@@ -186,13 +139,6 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files doc
 %doc _docs_staging/*
-
-%files devel
-%doc README LICENSE
-%{_includedir}/%{name}
-#%{_includedir}/%{name}/libextl
-#%{_includedir}/%{name}/libmainloop
-#%{_includedir}/%{name}/libtu
 
 %changelog
 * Sun Jan 19 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
