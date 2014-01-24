@@ -6,7 +6,10 @@ Version:        %{majorver}.%{datever}
 Release:        3%{?dist}
 Summary:        Tabbed, tiling window manager forked from Ion3
 
-License:        LGPLv2 with exceptions
+# Notion is distributed under a modified LGPLv2.1. As of 1/20/2014 this 
+# license was considered to be to restrictive to be included in the
+# official Fedora repositories.
+License:        Redistributable, modified LGPLv2.1
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
 # Source https://github.com/jsbackus/notion-doc/archive/3-2014010505.tar.gz
@@ -144,6 +147,7 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
   apply to source.
 - Removed devel subpackage.
 - Removed unnecessary patches.
+- Modified license to reflect
 
 * Sat Jan 18 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
 - Fixed a typo in required font package name.
