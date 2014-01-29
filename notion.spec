@@ -111,8 +111,8 @@ desktop-file-validate $RPM_BUILD_ROOT/%{_datadir}/xsessions/%{name}.desktop
 
 # contrib subpackage
 for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd statusd/legacy styles; do
-  mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
-  install -Dm0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/*.lua $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
+  install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i
+  install -pm 0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/*.lua $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
 done
 
 # Doc subpackage
@@ -142,6 +142,9 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %doc _docs_staging/*
 
 %changelog
+* Wed Jan 29 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
+- Tweaked install commands to preserve timestamps.
+
 * Sun Jan 19 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
 - Changed method of correcting manpage text encoding to something upstream can
   apply to source.
