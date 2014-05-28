@@ -12,7 +12,7 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        Redistributable, modified LGPLv2.1
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
-# Source https://github.com/jsbackus/notion-doc/archive/3-2014010505.tar.gz
+# Source https://github.com/jsbackus/notion-doc/archive/%{majorver}-%{datever}/%{name}-doc-%{majorver}-%{datever}.tar.gz
 Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.gz
 Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
