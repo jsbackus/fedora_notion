@@ -1,5 +1,5 @@
 %global majorver 3
-%global datever  2014010900
+%global datever  2014052800
 
 Name:           notion
 Version:        %{majorver}.%{datever}
@@ -12,12 +12,7 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        Redistributable, modified LGPLv2.1
 URL:            http://notion.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
-# Source https://github.com/jsbackus/notion-doc/archive/%{majorver}-%{datever}/%{name}-doc-%{majorver}-%{datever}.tar.gz
-Source1:        https://fedorahosted.org/released/%{name}/%{name}-doc-%{majorver}-%{datever}.tar.gz
-Source2:        https://fedorahosted.org/released/%{name}/%{name}.desktop
-
-# Patch submitted to upstream
-Patch0:         %{name}-%{majorver}.%{datever}.p00-man_utf8.patch
+Source1:        https://fedorahosted.org/released/%{name}/%{name}.desktop
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -27,11 +22,6 @@ BuildRequires:  libXrandr-devel
 BuildRequires:  lua-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libSM-devel
-
-BuildRequires:  rubber
-BuildRequires:  latex2html
-BuildRequires:  texlive-collection-htmlxml
-BuildRequires:  texlive-collection-latexextra
 
 Requires:       xterm
 Requires:       xorg-x11-utils
@@ -64,23 +54,8 @@ such as:
 Scripts are installed into %{_datadir}/%{name}/contrib. To use,
 copy/link the script(s) you want into ~/.notion and restart Notion.
 
-%package doc
-Summary:        Documentation for the Notion window manager
-License:        GFDL
-BuildArch:      noarch
-Requires:       %{name} = %{version}-%{release}
-
-%description doc
-This package contains the documentation for extending and customizing 
-Notion.
-
 %prep
 %setup -q -n %{name}-%{majorver}-%{datever}
-
-# Decompress doc pkg
-tar -xvf %SOURCE1
-
-%patch0 -p1
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
@@ -89,35 +64,21 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -i system-autodetect.mk
 
 %build
-# Installing docs to a temporary directory so that we can pick them up with 
-# doc macro later.
-mkdir $RPM_BUILD_DIR/%{buildsubdir}/_docs_staging
-
-make %{?_smp_mflags} DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging 
-
-# Note: -doc won't build w/ ?_smp_mflags. Shouldn't be a problem as there are
-# no executables.
-cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
-make DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=.. all
+make %{?_smp_mflags}
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
+make install DESTDIR=$RPM_BUILD_ROOT
 
 %find_lang %{name} --with-man
 
 # Install and verify desktop file
-desktop-file-install --dir=$RPM_BUILD_ROOT/%{_datadir}/xsessions %{SOURCE2}
-desktop-file-validate $RPM_BUILD_ROOT/%{_datadir}/xsessions/%{name}.desktop
+desktop-file-install --dir=$RPM_BUILD_ROOT/%{_datadir}/xsessions %{SOURCE1}
 
 # contrib subpackage
 for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd statusd/legacy styles; do
   install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i
   install -pm 0644 $RPM_BUILD_DIR/%{buildsubdir}/contrib/$i/*.lua $RPM_BUILD_ROOT%{_datadir}/%{name}/contrib/$i/
 done
-
-# Doc subpackage
-cd $RPM_BUILD_DIR/%{buildsubdir}/%{name}-doc-%{majorver}-%{datever}
-make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 
 %files -f %{name}.lang
 %doc README ChangeLog LICENSE RELNOTES
@@ -138,47 +99,6 @@ make install DOCDIR=$RPM_BUILD_DIR/%{buildsubdir}/_docs_staging TOPDIR=..
 %doc README LICENSE
 %{_datadir}/%{name}/contrib
 
-%files doc
-%doc _docs_staging/*
-
 %changelog
-* Wed Jan 29 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
-- Tweaked install commands to preserve timestamps.
-
-* Sun Jan 19 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-3
-- Changed method of correcting manpage text encoding to something upstream can
-  apply to source.
-- Removed devel subpackage.
-- Removed unnecessary patches.
-- Modified license to reflect
-
-* Sat Jan 18 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-2
-- Fixed a typo in required font package name.
-
-* Sun Jan 12 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014010900-1
-- New upstream release.
-- Fixed issue where contrib files where getting picked up by main package.
-
-* Sun Nov 24 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-3
-- Added patch for ion-statusd bug.
-- Removed URLs for patches.
-- Updated URLs for source1 and source2.
-- Switched to all references to package version to use variables.
-- Switched to find_lang from lang.
-- Switched to desktop-file-install and added desktop-file-validate.
-- Changed files section such that package owns whole directory instead of 
-  just individual files.
-- Moved libextl, libmainloop, and libtu into their own packages to conform
-  to Fedora guidelines.
-- Switched all documentation references in files section to using doc macro.
-- Removed BuildRequires: lua
-- Added optflags to build.
-- Updated notion.desktop.
-
-* Wed Nov 13 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-2
-- Modified devel to place all files in /usr/include
-- Added sed statment to alter X11_LIBS= in system-autodetect.mk to use pkgconfig.
-- Patched fonts in styles scripts to use valid 100dpi fonts.
-
-* Fri Nov 1 2013 Jeff Backus <jeff.backus@gmail.com> - 3.2013030200-1
-- Initial addition to Fedora.
+* Wed Jun 25 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014052800-1
+- Initial RPMFusion Release
