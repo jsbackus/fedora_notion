@@ -81,7 +81,7 @@ for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd s
 done
 
 %files -f %{name}.lang
-%doc README ChangeLog LICENSE RELNOTES
+%doc README CHANGELOG LICENSE
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
