@@ -3,7 +3,7 @@
 
 Name:           notion
 Version:        %{majorver}.%{datever}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        Tabbed, tiling window manager forked from Ion3
 
 # Notion is distributed under a modified LGPLv2.1. As of 1/20/2014 this 
@@ -67,7 +67,7 @@ sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
 make %{?_smp_mflags}
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
 
 %find_lang %{name} --with-man
 
