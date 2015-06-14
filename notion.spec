@@ -92,8 +92,8 @@ for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd s
 done
 
 %files -f %{name}.lang
-%doc README CHANGELOG 
 %license LICENSE
+%doc README CHANGELOG 
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
@@ -108,8 +108,8 @@ done
 %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
-%doc README 
 %license LICENSE
+%doc README 
 %{_datadir}/%{name}/contrib
 
 %changelog
