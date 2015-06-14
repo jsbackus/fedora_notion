@@ -63,7 +63,10 @@ copy/link the script(s) you want into ~/.notion and restart Notion.
 %prep
 %setup -qn %{name}-%{commit}
 
+# Only apply Lua 5.3 patch if Fedora 22 or newer.
+%if 0%{fedora} >= 22
 %patch0
+%endif
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
