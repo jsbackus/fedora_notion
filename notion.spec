@@ -1,5 +1,10 @@
 %global majorver 3
-%global datever  2014052800
+%global datever  2015061300
+
+%global commit		4adccb561c84e9d895e4e624289de2b1d1f79a5a
+
+# Proper naming for the tarball from github.
+%global gittar %{name}-%{version}.tar.gz
 
 Name:           notion
 Version:        %{majorver}.%{datever}
@@ -10,9 +15,10 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 # license was considered to be to restrictive to be included in the
 # official Fedora repositories.
 License:        Redistributable, modified LGPLv2.1
-URL:            http://notion.sourceforge.net
-Source0:        http://downloads.sourceforge.net/project/notion/%{name}-%{majorver}-%{datever}-src.tar.bz2
-Source1:        https://fedorahosted.org/released/%{name}/%{name}.desktop
+URL:            https://github.com/raboof/%{name}
+Source0:        %{url}/archive/%{commit}/%{gittar}
+Source1:        https://github.com/jsbackus/fedora_notion/blob/master/%{name}.desktop
+Patch0:         https://github.com/jsbackus/fedora_notion/blob/master/%{name}-%{version}.p00-lua53.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -55,7 +61,9 @@ Scripts are installed into %{_datadir}/%{name}/contrib. To use,
 copy/link the script(s) you want into ~/.notion and restart Notion.
 
 %prep
-%setup -q -n %{name}-%{majorver}-%{datever}
+%setup -qn %{name}-%{commit}
+
+%patch0
 
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
@@ -100,5 +108,9 @@ done
 %{_datadir}/%{name}/contrib
 
 %changelog
+* Sat Jun 13 2015 Jeff Backus <jeff.backus@gmail.com> - 3.2015061300-1
+- New release
+- Updated URLs to refer to GitHub
+
 * Wed Jun 25 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014052800-1
 - Initial RPMFusion Release
