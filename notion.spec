@@ -17,7 +17,7 @@ Summary:        Tabbed, tiling window manager forked from Ion3
 License:        Redistributable, modified LGPLv2.1
 URL:            https://github.com/raboof/%{name}
 Source0:        %{url}/archive/%{commit}/%{gittar}
-Source1:        https://github.com/jsbackus/fedora_notion/blob/master/%{name}.desktop
+Source1:        https://raw.githubusercontent.com/jsbackus/fedora_notion/master/%{name}.desktop
 Patch0:         https://github.com/jsbackus/fedora_notion/blob/master/%{name}-%{version}.p00-lua53.patch
 
 BuildRequires:  gettext
@@ -92,7 +92,8 @@ for i in keybindings scripts scripts/legacy statusbar statusbar/legacy statusd s
 done
 
 %files -f %{name}.lang
-%doc README CHANGELOG LICENSE
+%doc README CHANGELOG 
+%license LICENSE
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
@@ -107,7 +108,8 @@ done
 %{_datadir}/xsessions/%{name}.desktop
 
 %files contrib
-%doc README LICENSE
+%doc README 
+%license LICENSE
 %{_datadir}/%{name}/contrib
 
 %changelog
