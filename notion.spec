@@ -1,7 +1,6 @@
 %global majorver 3
-%global datever  2015061300
-
-%global commit		4adccb561c84e9d895e4e624289de2b1d1f79a5a
+%global datever  2016112000
+%global commit	 13b03bcc0fa16588746050a108d88e36065f5910
 
 # Proper naming for the tarball from github.
 %global gittar %{name}-%{version}.tar.gz
@@ -18,7 +17,6 @@ License:        Redistributable, modified LGPLv2.1
 URL:            https://github.com/raboof/%{name}
 Source0:        %{url}/archive/%{commit}/%{gittar}
 Source1:        https://raw.githubusercontent.com/jsbackus/fedora_notion/master/%{name}.desktop
-Patch0:         https://github.com/jsbackus/fedora_notion/blob/master/%{name}-%{version}.p00-lua53.patch
 
 BuildRequires:  gettext
 BuildRequires:  pkgconfig
@@ -63,11 +61,6 @@ copy/link the script(s) you want into ~/.notion and restart Notion.
 %prep
 %setup -qn %{name}-%{commit}
 
-# Only apply Lua 5.3 patch if Fedora 22 or newer.
-%if 0%{fedora} >= 22
-%patch0
-%endif
-
 sed -e 's|^\(PREFIX\s*?=\s*\).*$|\1%{_prefix}|' \
     -e 's|^\(ETCDIR\s*?=\s*\).*$|\1%{_sysconfdir}/%{name}|' \
     -e 's|^\(LIBDIR=\).*$|\1%{_libdir}|' \
@@ -79,6 +72,9 @@ make %{?_smp_mflags}
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT DOCDIR=%{_pkgdocdir}
+
+# Remove LICENSE from docdir as it will be copied over with license macro
+rm $RPM_BUILD_ROOT/%{_pkgdocdir}/LICENSE
 
 %find_lang %{name} --with-man
 
@@ -93,7 +89,7 @@ done
 
 %files -f %{name}.lang
 %license LICENSE
-%doc README CHANGELOG 
+%doc README.md CHANGELOG
 %config(noreplace) %{_sysconfdir}/%{name}
 %{_bindir}/*
 %{_libdir}/%{name}
@@ -109,13 +105,16 @@ done
 
 %files contrib
 %license LICENSE
-%doc README 
+%doc README.md 
 %{_datadir}/%{name}/contrib
 
 %changelog
+* Sat Jun 13 2015 Jeff Backus <jeff.backus@gmail.com> - 3.2016112000-1
+- Updated for latest snapshot
+
 * Sat Jun 13 2015 Jeff Backus <jeff.backus@gmail.com> - 3.2015061300-1
 - New release
 - Updated URLs to refer to GitHub
 
 * Wed Jun 25 2014 Jeff Backus <jeff.backus@gmail.com> - 3.2014052800-1
-- Initial RPMFusion Release
+- Initial Release
