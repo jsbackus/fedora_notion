@@ -4,3 +4,14 @@ name=bintray-jbackus-notion
 baseurl=https://dl.bintray.com/jsbackus/notion/notion/fedora/$releasever/$basearch
 gpgcheck=0
 enabled=1
+
+name=bintray-jbackus-notion-debug
+baseurl=https://dl.bintray.com/jsbackus/notion/notion/fedora/$releasever/$basearch/debug
+gpgcheck=0
+enabled=0
+
+[bintray-jbackus-notion-noarch]
+name=bintray-jbackus-notion-noarch
+baseurl=https://dl.bintray.com/jsbackus/notion/notion/fedora/$releasever/noarch
+gpgcheck=0
+enabled=1
