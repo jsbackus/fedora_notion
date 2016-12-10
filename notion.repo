@@ -1,8 +1,6 @@
-# Place this file in your /etc/yum.repos.d/ directory
-
-[notion]
-name=Notion RPM packages for Fedora
-baseurl=http://jsbackus.fedorapeople.org/notion/RPMS/fedora-$releasever/
-enabled=1
-skip_if_unavailable=1
+#bintray-jbackus-notion - packages by jsbackus from Bintray
+[bintray-jbackus-notion]
+name=bintray-jbackus-notion
+baseurl=https://dl.bintray.com/jsbackus/notion/notion/fedora/$releasever/$basearch
 gpgcheck=0
+enabled=1
