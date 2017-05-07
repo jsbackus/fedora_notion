@@ -1,6 +1,6 @@
 %global majorver 3
-%global datever  2016112000
-%global commit	 13b03bcc0fa16588746050a108d88e36065f5910
+%global datever  2017050501
+%global commit	 e12377e03a7d7bc4cdd4306fe6f343dfba9b271f
 
 # Proper naming for the tarball from github.
 %global gittar %{name}-%{version}.tar.gz
@@ -109,6 +109,9 @@ done
 %{_datadir}/%{name}/contrib
 
 %changelog
+* Sat Jun 13 2015 Jeff Backus <jeff.backus@gmail.com> - 3.2017050501-1
+- Updated for latest release
+
 * Sat Jun 13 2015 Jeff Backus <jeff.backus@gmail.com> - 3.2016112000-1
 - Updated for latest snapshot
 
